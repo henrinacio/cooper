@@ -76,7 +76,7 @@ export default async function LessonPage({ params }: Props) {
               return (
                 <Link
                   key={l.id}
-                  href={`/protected/learn/${courseSlug}/${l.id}`}
+                  href={`/protected/student/learn/${courseSlug}/${l.id}`}
                   className={cn(
                     "flex items-center gap-2 text-sm px-2 py-1 rounded transition-colors",
                     isActive

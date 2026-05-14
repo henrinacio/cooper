@@ -5,10 +5,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, ArrowLeft, Users } from "lucide-react";
+import { BookOpen, ArrowLeft, Users, Pencil, PlusCircle } from "lucide-react";
 import { PublishToggle } from "./publish-toggle";
 import { AddStudentForm } from "./add-student-form";
 import { RemoveStudentButton } from "./remove-student-button";
+import { AddModuleForm } from "./add-module-form";
+import { DeleteModuleButton } from "./delete-module-button";
+import { DeleteLessonButton } from "./delete-lesson-button";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -62,33 +65,61 @@ export default async function EditCoursePage({ params }: Props) {
 
       {/* Curriculum */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold">Curriculum</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Curriculum</h2>
+          <AddModuleForm courseId={course.id} />
+        </div>
+
         {!course.modules.length ? (
-          <p className="text-muted-foreground text-sm">No modules yet.</p>
+          <p className="text-muted-foreground text-sm">No modules yet. Add one above.</p>
         ) : (
           course.modules.map((mod) => (
             <Card key={mod.id}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold flex items-center justify-between">
-                  {mod.title}
-                  <Badge variant="outline" className="text-xs">
-                    {mod.lessons.length} lessons
-                  </Badge>
+                  <span>{mod.title}</span>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {mod.lessons.length} lessons
+                    </Badge>
+                    <DeleteModuleButton courseId={course.id} moduleId={mod.id} />
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-1">
                 {mod.lessons.map((lesson) => (
                   <div
                     key={lesson.id}
-                    className="flex items-center gap-2 text-sm py-1 px-2 rounded hover:bg-accent"
+                    className="flex items-center gap-2 text-sm py-1 px-2 rounded hover:bg-accent group"
                   >
-                    <BookOpen size={13} className="text-muted-foreground" />
+                    <BookOpen size={13} className="text-muted-foreground shrink-0" />
                     <span className="flex-1">{lesson.title}</span>
                     <Badge variant="outline" className="text-xs capitalize">
                       {lesson.type}
                     </Badge>
+                    <Link
+                      href={`/protected/instructor/courses/${course.id}/lessons/${lesson.id}`}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                        <Pencil size={12} />
+                      </Button>
+                    </Link>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <DeleteLessonButton courseId={course.id} lessonId={lesson.id} />
+                    </div>
                   </div>
                 ))}
+
+                <Link
+                  href={`/protected/instructor/courses/${course.id}/lessons/new?moduleId=${mod.id}`}
+                  className="mt-1"
+                >
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground">
+                    <PlusCircle size={13} />
+                    Add lesson
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))

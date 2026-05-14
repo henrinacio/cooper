@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { NAV_ITEMS } from "@/components/navigation/nav-items";
+import { getNavItems } from "@/components/navigation/nav-items";
 
-export default function BottomNav() {
+export default function BottomNav({ role }: { role: string | null }) {
   const pathname = usePathname();
+  const NAV_ITEMS = getNavItems(role);
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border bg-background">

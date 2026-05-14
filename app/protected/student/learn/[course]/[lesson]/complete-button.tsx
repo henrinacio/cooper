@@ -43,7 +43,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, courseSlug, com
       {nextLessonId && (
         <Button
           variant="outline"
-          onClick={() => router.push(`/protected/learn/${courseSlug}/${nextLessonId}`)}
+          onClick={() => router.push(`/protected/student/learn/${courseSlug}/${nextLessonId}`)}
         >
           Next Lesson
         </Button>

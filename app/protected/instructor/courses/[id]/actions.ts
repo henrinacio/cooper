@@ -2,6 +2,140 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { LessonType } from "@/lib/supabase/types";
+
+// ---- modules ----------------------------------------------------------------
+
+export async function createModule(
+  courseId: string,
+  title: string,
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { error: "Not authenticated" };
+
+  const { data: maxRow } = await supabase
+    .from("modules")
+    .select("order")
+    .eq("course_id", courseId)
+    .order("order", { ascending: false })
+    .limit(1)
+    .single();
+
+  const order = maxRow ? maxRow.order + 1 : 1;
+
+  const { error } = await supabase
+    .from("modules")
+    .insert({ course_id: courseId, title, order });
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`);
+  return {};
+}
+
+export async function deleteModule(
+  courseId: string,
+  moduleId: string,
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { error: "Not authenticated" };
+
+  const { error } = await supabase
+    .from("modules")
+    .delete()
+    .eq("id", moduleId)
+    .eq("course_id", courseId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`);
+  return {};
+}
+
+// ---- lessons ----------------------------------------------------------------
+
+interface LessonData {
+  title: string;
+  type: LessonType;
+  content: string | null;
+  video_url: string | null;
+  duration_s: number | null;
+}
+
+export async function createLesson(
+  courseId: string,
+  moduleId: string,
+  data: LessonData,
+): Promise<{ id?: string; error?: string }> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { error: "Not authenticated" };
+
+  const { data: maxRow } = await supabase
+    .from("lessons")
+    .select("order")
+    .eq("module_id", moduleId)
+    .order("order", { ascending: false })
+    .limit(1)
+    .single();
+
+  const order = maxRow ? maxRow.order + 1 : 1;
+
+  const { data: lesson, error } = await supabase
+    .from("lessons")
+    .insert({ module_id: moduleId, order, ...data })
+    .select("id")
+    .single();
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`);
+  return { id: lesson.id };
+}
+
+export async function updateLesson(
+  courseId: string,
+  lessonId: string,
+  data: LessonData,
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { error: "Not authenticated" };
+
+  const { error } = await supabase
+    .from("lessons")
+    .update(data)
+    .eq("id", lessonId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`);
+  return {};
+}
+
+export async function deleteLesson(
+  courseId: string,
+  lessonId: string,
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { error: "Not authenticated" };
+
+  const { error } = await supabase
+    .from("lessons")
+    .delete()
+    .eq("id", lessonId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`);
+  return {};
+}
+
+// ---- students ---------------------------------------------------------------
 
 export async function addStudentToCourse(
   courseId: string,

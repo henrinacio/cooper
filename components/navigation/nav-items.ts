@@ -1,7 +1,14 @@
 import { Home, Bell, User } from "lucide-react";
 
-export const NAV_ITEMS = [
-  { href: "/protected/student/dashboard", label: "Home", icon: Home },
-  { href: "/protected/notifications", label: "Notifications", icon: Bell },
-  { href: "/protected/account", label: "My Account", icon: User },
-];
+export function getNavItems(role: string | null) {
+  const homeHref =
+    role === "instructor" || role === "admin"
+      ? "/protected/instructor/courses"
+      : "/protected/student/dashboard";
+
+  return [
+    { href: homeHref, label: "Home", icon: Home },
+    { href: "/protected/notifications", label: "Notifications", icon: Bell },
+    { href: "/protected/account", label: "My Account", icon: User },
+  ];
+}
