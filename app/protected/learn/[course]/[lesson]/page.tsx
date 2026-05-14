@@ -3,7 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { Lesson, ModuleWithLessons } from "@/lib/supabase/types";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { CheckCircle, BookOpen } from "lucide-react";
+import { CheckCircle, BookOpen, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { CompleteButton } from "./complete-button";
 
 interface Props {
@@ -99,6 +100,13 @@ export default async function LessonPage({ params }: Props) {
 
       {/* Lesson content */}
       <div className="flex-1 flex flex-col gap-6">
+        <Button asChild variant="ghost" size="sm" className="w-fit">
+          <Link href={`/protected/courses/${courseSlug}`}>
+            <ArrowLeft size={14} />
+            Back to course
+          </Link>
+        </Button>
+
         <div>
           <h1 className="text-2xl font-bold">{lesson.title}</h1>
         </div>

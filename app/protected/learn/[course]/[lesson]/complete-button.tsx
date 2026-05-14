@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Undo2 } from "lucide-react";
 
 interface Props {
   lessonId: string;
@@ -29,6 +29,15 @@ export function CompleteButton({ lessonId, userId, nextLessonId, courseSlug, com
     router.refresh();
   }
 
+  async function markIncomplete() {
+    setLoading(true);
+    const supabase = createClient();
+    await supabase.from("progress").delete().eq("user_id", userId).eq("lesson_id", lessonId);
+    setDone(false);
+    setLoading(false);
+    router.refresh();
+  }
+
   return (
     <div className="flex gap-3">
       <Button
@@ -40,10 +49,22 @@ export function CompleteButton({ lessonId, userId, nextLessonId, courseSlug, com
         <CheckCircle size={16} />
         {done ? "Completed" : loading ? "Saving…" : "Mark Complete"}
       </Button>
+      {done && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={markIncomplete}
+          disabled={loading}
+          className="flex items-center gap-1 text-muted-foreground"
+        >
+          <Undo2 size={14} />
+          Undo
+        </Button>
+      )}
       {nextLessonId && (
         <Button
           variant="outline"
-          onClick={() => router.push(`/protected/student/learn/${courseSlug}/${nextLessonId}`)}
+          onClick={() => router.push(`/protected/learn/${courseSlug}/${nextLessonId}`)}
         >
           Next Lesson
         </Button>
