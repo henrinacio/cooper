@@ -1,0 +1,56 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { addStudentToCourse } from "./actions";
+import { UserPlus } from "lucide-react";
+
+export function AddStudentForm({ courseId }: { courseId: string }) {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    const result = await addStudentToCourse(courseId, email.trim());
+
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setSuccess(`${email} enrolled successfully`);
+      setEmail("");
+    }
+
+    setLoading(false);
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-3">
+      <Label htmlFor="student-email">Add student by email</Label>
+      <div className="flex gap-2">
+        <Input
+          id="student-email"
+          type="email"
+          placeholder="student@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="max-w-sm"
+        />
+        <Button type="submit" disabled={loading} size="sm">
+          <UserPlus size={14} />
+          {loading ? "Adding…" : "Add"}
+        </Button>
+      </div>
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      {success && <p className="text-sm text-green-600 dark:text-green-400">{success}</p>}
+    </form>
+  );
+}

@@ -1,9 +1,9 @@
-import { AuthButton } from "@/components/auth-button";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
 import { Suspense } from "react";
+import { AuthButton } from "@/components/auth-button";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
-export default function ProtectedLayout({
+export default function CoursesLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -16,12 +16,6 @@ export default function ProtectedLayout({
             <Link href="/">Cooper</Link>
             <Link href="/courses" className="font-normal text-foreground/70 hover:text-foreground">
               Courses
-            </Link>
-            <Link href="/protected/dashboard" className="font-normal text-foreground/70 hover:text-foreground">
-              My Learning
-            </Link>
-            <Link href="/protected/instructor/courses" className="font-normal text-foreground/70 hover:text-foreground">
-              Teach
             </Link>
           </div>
           <div className="flex items-center gap-4">
