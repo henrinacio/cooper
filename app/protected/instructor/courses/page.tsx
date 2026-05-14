@@ -27,7 +27,7 @@ async function CourseList() {
     .single();
 
   if (!profile || !["instructor", "admin"].includes(profile.role)) {
-    redirect("/protected/student/dashboard");
+    redirect("/protected/dashboard");
   }
 
   const { data: courses } = await supabase

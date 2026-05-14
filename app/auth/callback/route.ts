@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         redirect("/protected/instructor/courses");
       }
 
-      redirect("/protected/student/dashboard");
+      redirect("/protected/dashboard");
     }
 
     redirect(`/auth/error?error=${error.message}`);

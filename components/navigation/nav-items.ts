@@ -4,7 +4,7 @@ export function getNavItems(role: string | null) {
   const homeHref =
     role === "instructor" || role === "admin"
       ? "/protected/instructor/courses"
-      : "/protected/student/dashboard";
+      : "/protected/dashboard";
 
   return [
     { href: homeHref, label: "Home", icon: Home },
