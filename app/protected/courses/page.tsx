@@ -10,14 +10,18 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = { title: "My Courses" };
 
 export default async function CoursesPage() {
   const supabase = await createClient();
 
-  const { data: claims } = await supabase.auth.getClaims();
-  if (!claims?.claims) redirect("/auth/login");
+  const { data, error } = await supabase.auth.getClaims();
+
+  if (error || !data?.claims) {
+    redirect("/auth/login");
+  }
 
   const { data: courses } = await supabase
     .from("courses")
@@ -39,10 +43,10 @@ export default async function CoursesPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {courses.map((course) => (
-            <Link key={course.id} href={`/courses/${course.slug}`}>
+            <Link key={course.id} href={`/protected/courses/${course.slug}`}>
               <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
                 {course.thumbnail_url && (
-                  <img
+                  <Image
                     src={course.thumbnail_url}
                     alt={course.title}
                     className="w-full h-40 object-cover rounded-t-xl"
