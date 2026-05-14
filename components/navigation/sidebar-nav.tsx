@@ -26,7 +26,7 @@ export default function SidebarNav() {
                 : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
             )}
           >
-            <Icon size={18} strokeWidth={active ? 2.5 : 1.75} />
+            <Icon size={16} strokeWidth={active ? 2.5 : 1.75} />
             {label}
           </Link>
         );

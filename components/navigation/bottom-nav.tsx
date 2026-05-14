@@ -22,7 +22,7 @@ export default function BottomNav() {
                 active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon size={22} strokeWidth={active ? 2.5 : 1.75} />
+              <Icon size={24} strokeWidth={active ? 2.5 : 1.75} />
               <span>{label}</span>
             </Link>
           );
