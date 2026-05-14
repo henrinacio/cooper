@@ -72,15 +72,6 @@ async function CourseList() {
 
         return (
           <Card key={enrollment.course_id} className="flex flex-col">
-            {course.thumbnail_url && (
-              <Image
-                src={course.thumbnail_url}
-                alt={course.title}
-                width={600}
-                height={144}
-                className="w-full h-36 object-cover rounded-t-xl"
-              />
-            )}
             <CardHeader className="flex-1">
               <CardTitle className="text-base">{course.title}</CardTitle>
               <CardDescription className="line-clamp-2">

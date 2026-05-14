@@ -6,15 +6,13 @@ import { Suspense } from "react";
 
 const NAV_LINKS: Record<string, { href: string; label: string }[]> = {
   student: [
-    { href: "/protected/courses", label: "Courses" },
-    { href: "/protected/dashboard", label: "My Learning" },
+    { href: "/protected/student/dashboard", label: "Dashboard" },
   ],
   instructor: [
     { href: "/protected/instructor/courses", label: "Teach" },
   ],
   admin: [
-    { href: "/protected/courses", label: "Courses" },
-    { href: "/protected/dashboard", label: "My Learning" },
+    { href: "/protected/student/dashboard", label: "Dashboard" },
     { href: "/protected/instructor/courses", label: "Teach" },
   ],
 };

@@ -2,12 +2,24 @@ import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { BookOpen, BarChart2, Award } from "lucide-react";
-import TopbarNavigation from "@/components/topbar-navigation";
+import { Suspense } from "react";
+import { AuthButton } from "@/components/auth-button";
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
-      <TopbarNavigation />
+      <nav className="w-full border-b border-b-foreground/10 h-16 flex justify-center">
+        <div className="w-full max-w-5xl flex justify-between items-center px-5 text-sm">
+          <div className="flex gap-6 items-center font-semibold">
+            <Link href="/">Cooper</Link>
+          </div>
+          <div className="flex items-center gap-4">
+            <Suspense>
+              <AuthButton />
+            </Suspense>
+          </div>
+        </div>
+      </nav>
 
       <section className="flex flex-col items-center text-center gap-6 px-5 py-24">
         <h1 className="text-5xl font-bold tracking-tight max-w-2xl leading-tight">
