@@ -15,7 +15,6 @@ export interface Course {
   slug: string;
   title: string;
   description: string | null;
-  thumbnail_url: string | null;
   instructor_id: string;
   published: boolean;
   created_at: string;

@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -18,7 +17,6 @@ type Course = {
   slug: string;
   title: string;
   description: string | null;
-  thumbnail_url: string | null;
   modules: { lessons: { id: string }[] | null }[] | null;
 };
 
@@ -36,7 +34,7 @@ async function CourseList() {
 
   const { data: enrollments } = await supabase
     .from("enrollments")
-    .select("course_id, enrolled_at, courses(id, slug, title, description, thumbnail_url, modules(lessons(id)))")
+    .select("course_id, enrolled_at, courses(id, slug, title, description, modules(lessons(id)))")
     .eq("user_id", userId)
     .order("enrolled_at", { ascending: false });
 

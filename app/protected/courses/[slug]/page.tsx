@@ -50,13 +50,6 @@ export default async function CourseDetailPage({ params }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        {course.thumbnail_url && (
-          <img
-            src={course.thumbnail_url}
-            alt={course.title}
-            className="w-full h-56 object-cover rounded-xl"
-          />
-        )}
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold">{course.title}</h1>
           {course.description && (
