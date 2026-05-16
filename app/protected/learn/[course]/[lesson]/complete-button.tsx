@@ -10,11 +10,13 @@ interface Props {
   lessonId: string;
   userId: string;
   nextLessonId?: string;
+  prevLessonId?: string;
   courseSlug: string;
   completed: boolean;
+  isPrivileged: boolean;
 }
 
-export function CompleteButton({ lessonId, userId, nextLessonId, courseSlug, completed }: Props) {
+export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, courseSlug, completed, isPrivileged }: Props) {
   const [done, setDone] = useState(completed);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -40,15 +42,17 @@ export function CompleteButton({ lessonId, userId, nextLessonId, courseSlug, com
 
   return (
     <div className="flex gap-3">
-      <Button
-        onClick={markComplete}
-        disabled={done || loading}
-        variant={done ? "secondary" : "default"}
-        className="flex items-center gap-2"
-      >
-        <CheckCircle size={16} />
-        {done ? "Completed" : loading ? "Saving…" : "Mark Complete"}
-      </Button>
+      {!isPrivileged && (
+        <Button
+          onClick={markComplete}
+          disabled={done || loading}
+          variant={done ? "secondary" : "default"}
+          className="flex items-center gap-2"
+        >
+          <CheckCircle size={16} />
+          {done ? "Completed" : loading ? "Saving…" : "Mark Complete"}
+        </Button>
+      )}
       {done && (
         <Button
           variant="ghost"
@@ -59,6 +63,14 @@ export function CompleteButton({ lessonId, userId, nextLessonId, courseSlug, com
         >
           <Undo2 size={14} />
           Undo
+        </Button>
+      )}
+      {prevLessonId && (
+        <Button
+          variant="outline"
+          onClick={() => router.push(`/protected/learn/${courseSlug}/${prevLessonId}`)}
+        >
+          Previous Lesson
         </Button>
       )}
       {nextLessonId && (

@@ -25,8 +25,19 @@ export default async function CourseDetailPage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: claims } = await supabase.auth.getClaims();
-  if (!claims?.claims) redirect("/auth/login");
+  const { data } = await supabase.auth.getClaims();
+
+  if (!data?.claims) {
+    redirect("/auth/login");
+  }
+
+  const userId = data.claims.sub as string;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
 
   // RLS ensures this returns null if the user has no access
   const { data: course } = await supabase
@@ -45,7 +56,10 @@ export default async function CourseDetailPage({ params }: Props) {
     (acc, m) => acc + m.lessons.length,
     0,
   );
+
   const firstLesson = course.modules[0]?.lessons[0];
+
+  const isPrivileged = profile ? ['instructor', 'admin'].includes(profile.role) : false
 
   return (
     <div className="flex flex-col gap-8">
@@ -58,7 +72,16 @@ export default async function CourseDetailPage({ params }: Props) {
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold">{course.title}</h1>
+          <div className="flex flex-row gap-2 items-center">
+            <h1 className="text-3xl font-bold">{course.title}</h1>
+            {profile && isPrivileged && (
+              <div>
+                <Badge variant="outline" className="text-xs">
+                  Preview Mode
+                </Badge>
+              </div>
+            )}
+          </div>
           {course.description && (
             <p className="text-muted-foreground">{course.description}</p>
           )}
@@ -70,7 +93,7 @@ export default async function CourseDetailPage({ params }: Props) {
           </div>
         </div>
 
-        {firstLesson && (
+        {!isPrivileged && firstLesson && (
           <div>
             <Button asChild>
               <Link href={`/protected/learn/${course.slug}/${firstLesson.id}`}>

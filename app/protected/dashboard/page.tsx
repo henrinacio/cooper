@@ -32,6 +32,16 @@ async function CourseList() {
 
   const userId = data.claims.sub as string;
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+
+  if (profile && ["instructor", "admin"].includes(profile.role)) {
+    redirect("/protected/instructor/courses")
+  }
+
   const { data: enrollments } = await supabase
     .from("enrollments")
     .select("course_id, enrolled_at, courses(id, slug, title, description, modules(lessons(id)))")

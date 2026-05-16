@@ -13,6 +13,8 @@ import { AddModuleForm } from "./add-module-form";
 import { DeleteModuleButton } from "./delete-module-button";
 import { DeleteLessonButton } from "./delete-lesson-button";
 
+type EnrollmentProfile = { id: string; full_name: string | null };
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -21,14 +23,17 @@ export default async function EditCoursePage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: claims } = await supabase.auth.getClaims();
-  if (!claims?.claims) redirect("/auth/login");
+  const { data } = await supabase.auth.getClaims();
+
+  if (!data?.claims) {
+    redirect("/auth/login");
+  }
 
   const { data: course } = await supabase
     .from("courses")
     .select("*, modules(id, title, order, lessons(id, title, type, order))")
     .eq("id", id)
-    .eq("instructor_id", claims.claims.sub as string)
+    .eq("instructor_id", data.claims.sub as string)
     .order("order", { referencedTable: "modules" })
     .order("order", { referencedTable: "modules.lessons" })
     .single<CourseWithModules>();
@@ -60,7 +65,12 @@ export default async function EditCoursePage({ params }: Props) {
             <p className="text-muted-foreground mt-1">{course.description}</p>
           )}
         </div>
-        <PublishToggle courseId={course.id} published={course.published} />
+        <div className="flex gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/protected/courses/${course.slug}`}>Preview</Link>
+          </Button>
+          <PublishToggle courseId={course.id} published={course.published} />
+        </div>
       </div>
 
       {/* Curriculum */}
@@ -142,11 +152,11 @@ export default async function EditCoursePage({ params }: Props) {
 
         {!!enrollments?.length && (
           <div className="flex flex-col gap-1 mt-2">
-            {enrollments.map((e) => {
-              const profile = e.profiles as any;
+            {enrollments.map((enrollment) => {
+              const profile = (enrollment.profiles as EnrollmentProfile[] | null)?.[0];
               return (
                 <div
-                  key={e.id}
+                  key={enrollment.id}
                   className="flex items-center justify-between text-sm px-3 py-2 rounded border"
                 >
                   <div className="flex flex-col">
@@ -154,12 +164,12 @@ export default async function EditCoursePage({ params }: Props) {
                       {profile?.full_name ?? "—"}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      Enrolled {new Date(e.enrolled_at).toLocaleDateString()}
+                      Enrolled {new Date(enrollment.enrolled_at).toLocaleDateString()}
                     </span>
                   </div>
                   <RemoveStudentButton
                     courseId={course.id}
-                    enrollmentId={e.id}
+                    enrollmentId={enrollment.id}
                   />
                 </div>
               );

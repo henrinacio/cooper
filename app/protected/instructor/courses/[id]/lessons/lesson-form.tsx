@@ -28,18 +28,32 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
 
   const isEdit = !!lesson;
 
+  function readingTimeSecs(content: string): number | null {
+    const words = content.trim().split(/\s+/).filter(Boolean).length;
+    return words > 0 ? Math.ceil(words / 200) * 60 : null;
+  }
+
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
+    const content = type !== "video" ? ((form.get("content") as string).trim() || null) : null;
+
+    let duration_s: number | null = null;
+    if (type === "video") {
+      duration_s = Number(form.get("duration_s")) || null;
+    } else if (type === "text" && content) {
+      duration_s = readingTimeSecs(content);
+    }
+
     const data = {
       title: (form.get("title") as string).trim(),
       type,
-      content: type !== "video" ? ((form.get("content") as string).trim() || null) : null,
+      content,
       video_url: type === "video" ? ((form.get("video_url") as string).trim() || null) : null,
-      duration_s: type === "video" ? (Number(form.get("duration_s")) || null) : null,
+      duration_s,
     };
 
     if (isEdit) {
