@@ -97,6 +97,7 @@ export default async function Home() {
 
       <footer className="mt-auto w-full border-t flex items-center justify-center gap-8 py-8 text-xs text-muted-foreground">
         <span>© 2026 Cooper</span>
+        <Link href="/about" className="hover:underline">About</Link>
         <ThemeSwitcher />
       </footer>
     </main>
