@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { deleteLesson } from "./actions";
-import { Trash2 } from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { deleteLesson } from "./actions"
+import { Trash2 } from "lucide-react"
 
 interface Props {
   courseId: string;
@@ -11,11 +11,11 @@ interface Props {
 }
 
 export function DeleteLessonButton({ courseId, lessonId }: Props) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   async function remove() {
-    setLoading(true);
-    await deleteLesson(courseId, lessonId);
+    setLoading(true)
+    await deleteLesson(courseId, lessonId)
   }
 
   return (
@@ -28,5 +28,5 @@ export function DeleteLessonButton({ courseId, lessonId }: Props) {
     >
       <Trash2 size={13} />
     </Button>
-  );
+  )
 }

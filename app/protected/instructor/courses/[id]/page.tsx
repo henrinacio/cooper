@@ -1,18 +1,18 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
-import { CourseWithModules } from "@/lib/supabase/types";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, Pencil, PlusCircle } from "lucide-react";
-import { BackButton } from "@/components/back-button";
-import { PublishToggle } from "./publish-toggle";
-import { AddStudentForm } from "./add-student-form";
-import { RemoveStudentButton } from "./remove-student-button";
-import { AddModuleForm } from "./add-module-form";
-import { DeleteModuleButton } from "./delete-module-button";
-import { DeleteLessonButton } from "./delete-lesson-button";
+import { createClient } from "@/lib/supabase/server"
+import { redirect, notFound } from "next/navigation"
+import { CourseWithModules } from "@/lib/supabase/types"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BookOpen, Users, Pencil, PlusCircle } from "lucide-react"
+import { BackButton } from "@/components/back-button"
+import { PublishToggle } from "./publish-toggle"
+import { AddStudentForm } from "./add-student-form"
+import { RemoveStudentButton } from "./remove-student-button"
+import { AddModuleForm } from "./add-module-form"
+import { DeleteModuleButton } from "./delete-module-button"
+import { DeleteLessonButton } from "./delete-lesson-button"
 
 type EnrollmentProfile = { id: string; full_name: string | null };
 
@@ -21,13 +21,13 @@ interface Props {
 }
 
 export default async function EditCoursePage({ params }: Props) {
-  const { id } = await params;
-  const supabase = await createClient();
+  const { id } = await params
+  const supabase = await createClient()
 
-  const { data } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims()
 
   if (!data?.claims) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
   const { data: course } = await supabase
@@ -37,15 +37,15 @@ export default async function EditCoursePage({ params }: Props) {
     .eq("instructor_id", data.claims.sub as string)
     .order("order", { referencedTable: "modules" })
     .order("order", { referencedTable: "modules.lessons" })
-    .single<CourseWithModules>();
+    .single<CourseWithModules>()
 
-  if (!course) notFound();
+  if (!course) notFound()
 
   const { data: enrollments } = await supabase
     .from("enrollments")
     .select("id, user_id, enrolled_at, profiles(id, full_name)")
     .eq("course_id", id)
-    .order("enrolled_at", { ascending: false });
+    .order("enrolled_at", { ascending: false })
 
   return (
     <div className="flex flex-col gap-8">
@@ -149,7 +149,7 @@ export default async function EditCoursePage({ params }: Props) {
         {!!enrollments?.length && (
           <div className="flex flex-col gap-1 mt-2">
             {enrollments.map((enrollment) => {
-              const profile = (enrollment.profiles as EnrollmentProfile[] | null)?.[0];
+              const profile = (enrollment.profiles as EnrollmentProfile[] | null)?.[0]
               return (
                 <div
                   key={enrollment.id}
@@ -168,11 +168,11 @@ export default async function EditCoursePage({ params }: Props) {
                     enrollmentId={enrollment.id}
                   />
                 </div>
-              );
+              )
             })}
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }

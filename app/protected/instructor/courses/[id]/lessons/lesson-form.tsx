@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { createLesson, updateLesson } from "../actions";
-import { Lesson, LessonType } from "@/lib/supabase/types";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { createLesson, updateLesson } from "../actions"
+import { Lesson, LessonType } from "@/lib/supabase/types"
 
 interface Props {
   courseId: string;
@@ -18,34 +18,34 @@ const LESSON_TYPES: { value: LessonType; label: string }[] = [
   { value: "video", label: "Video" },
   { value: "text", label: "Text" },
   { value: "quiz", label: "Quiz" },
-];
+]
 
 export function LessonForm({ courseId, moduleId, lesson }: Props) {
-  const router = useRouter();
-  const [type, setType] = useState<LessonType>(lesson?.type ?? "text");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [type, setType] = useState<LessonType>(lesson?.type ?? "text")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const isEdit = !!lesson;
+  const isEdit = !!lesson
 
   function readingTimeSecs(content: string): number | null {
-    const words = content.trim().split(/\s+/).filter(Boolean).length;
-    return words > 0 ? Math.ceil(words / 200) * 60 : null;
+    const words = content.trim().split(/\s+/).filter(Boolean).length
+    return words > 0 ? Math.ceil(words / 200) * 60 : null
   }
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
 
-    const form = new FormData(e.currentTarget);
-    const content = type !== "video" ? ((form.get("content") as string).trim() || null) : null;
+    const form = new FormData(e.currentTarget)
+    const content = type !== "video" ? ((form.get("content") as string).trim() || null) : null
 
-    let duration_s: number | null = null;
+    let duration_s: number | null = null
     if (type === "video") {
-      duration_s = Number(form.get("duration_s")) || null;
+      duration_s = Number(form.get("duration_s")) || null
     } else if (type === "text" && content) {
-      duration_s = readingTimeSecs(content);
+      duration_s = readingTimeSecs(content)
     }
 
     const data = {
@@ -54,18 +54,28 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
       content,
       video_url: type === "video" ? ((form.get("video_url") as string).trim() || null) : null,
       duration_s,
-    };
+    }
 
     if (isEdit) {
-      const result = await updateLesson(courseId, lesson.id, data);
-      setLoading(false);
-      if (result.error) { setError(result.error); return; }
-      router.push(`/protected/instructor/courses/${courseId}`);
+      const result = await updateLesson(courseId, lesson.id, data)
+      setLoading(false)
+
+      if (result.error) {
+        setError(result.error)
+        return
+      }
+
+      router.push(`/protected/instructor/courses/${courseId}`)
     } else {
-      const result = await createLesson(courseId, moduleId, data);
-      setLoading(false);
-      if (result.error) { setError(result.error); return; }
-      router.push(`/protected/instructor/courses/${courseId}`);
+      const result = await createLesson(courseId, moduleId, data)
+      setLoading(false)
+
+      if (result.error) {
+        setError(result.error)
+        return
+      }
+
+      router.push(`/protected/instructor/courses/${courseId}`)
     }
   }
 
@@ -157,5 +167,5 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

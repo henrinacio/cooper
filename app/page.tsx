@@ -1,33 +1,33 @@
-import Link from "next/link";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Button } from "@/components/ui/button";
-import { BookOpen, BarChart2, Award } from "lucide-react";
-import { Suspense } from "react";
-import { AuthButton } from "@/components/auth-button";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import Link from "next/link"
+import { ThemeSwitcher } from "@/components/theme-switcher"
+import { Button } from "@/components/ui/button"
+import { BookOpen, BarChart2, Award } from "lucide-react"
+import { Suspense } from "react"
+import { AuthButton } from "@/components/auth-button"
+import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation"
 
 async function AuthRedirect() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
 
   if (data) {
-    const userId = data.claims.sub as string;
+    const userId = data.claims.sub as string
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", userId)
-      .single();
+      .single()
 
     if (profile && ["instructor", "admin"].includes(profile.role)) {
-      redirect("/protected/instructor/courses");
+      redirect("/protected/instructor/courses")
     }
     if (profile && profile.role === "student") {
-      redirect("/protected/dashboard");
+      redirect("/protected/dashboard")
     }
   }
 
-  return null;
+  return null
 }
 
 export default async function Home() {
@@ -105,5 +105,5 @@ export default async function Home() {
         <ThemeSwitcher />
       </footer>
     </main>
-  );
+  )
 }

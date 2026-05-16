@@ -1,41 +1,41 @@
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/client"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useState } from "react";
+} from "@/components/ui/card"
+import { useState } from "react"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleGoogleSignIn = async () => {
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
+    const supabase = createClient()
+    setIsLoading(true)
+    setError(null)
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
-    });
+    })
 
     if (error) {
-      setError(error.message);
-      setIsLoading(false);
+      setError(error.message)
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -57,5 +57,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

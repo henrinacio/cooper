@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Undo2 } from "lucide-react";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
+import { Button } from "@/components/ui/button"
+import { CheckCircle, Undo2 } from "lucide-react"
 
 interface Props {
   lessonId: string;
@@ -17,27 +17,27 @@ interface Props {
 }
 
 export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, courseSlug, completed, isPrivileged }: Props) {
-  const [done, setDone] = useState(completed);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [done, setDone] = useState(completed)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function markComplete() {
-    if (done) return;
-    setLoading(true);
-    const supabase = createClient();
-    await supabase.from("progress").upsert({ user_id: userId, lesson_id: lessonId });
-    setDone(true);
-    setLoading(false);
-    router.refresh();
+    if (done) return
+    setLoading(true)
+    const supabase = createClient()
+    await supabase.from("progress").upsert({ user_id: userId, lesson_id: lessonId })
+    setDone(true)
+    setLoading(false)
+    router.refresh()
   }
 
   async function markIncomplete() {
-    setLoading(true);
-    const supabase = createClient();
-    await supabase.from("progress").delete().eq("user_id", userId).eq("lesson_id", lessonId);
-    setDone(false);
-    setLoading(false);
-    router.refresh();
+    setLoading(true)
+    const supabase = createClient()
+    await supabase.from("progress").delete().eq("user_id", userId).eq("lesson_id", lessonId)
+    setDone(false)
+    setLoading(false)
+    router.refresh()
   }
 
   return (
@@ -82,5 +82,5 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
         </Button>
       )}
     </div>
-  );
+  )
 }

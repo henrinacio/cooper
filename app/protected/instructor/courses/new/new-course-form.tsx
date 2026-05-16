@@ -1,50 +1,50 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export function NewCourseForm() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
 
-    const form = new FormData(e.currentTarget);
-    const title = (form.get("title") as string).trim();
-    const description = (form.get("description") as string).trim();
-    const published = form.get("published") === "on";
+    const form = new FormData(e.currentTarget)
+    const title = (form.get("title") as string).trim()
+    const description = (form.get("description") as string).trim()
+    const published = form.get("published") === "on"
 
     const slug = title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+      .replace(/^-|-$/g, "")
 
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push("/auth/login"); return; }
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { router.push("/auth/login"); return }
 
     const { data, error: err } = await supabase
       .from("courses")
       .insert({ title, description: description || null, slug, instructor_id: user.id, published })
       .select("id")
-      .single();
+      .single()
 
     if (err) {
-      setError(err.message);
-      setLoading(false);
-      return;
+      setError(err.message)
+      setLoading(false)
+      return
     }
 
-    router.push(`/protected/instructor/courses/${data.id}`);
+    router.push(`/protected/instructor/courses/${data.id}`)
   }
 
   return (
@@ -66,5 +66,5 @@ export function NewCourseForm() {
         {loading ? "Creating…" : "Create Course"}
       </Button>
     </form>
-  );
+  )
 }

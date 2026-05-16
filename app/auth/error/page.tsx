@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Suspense } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Suspense } from "react"
 
 async function ErrorContent({
   searchParams,
 }: {
   searchParams: Promise<{ error: string }>;
 }) {
-  const params = await searchParams;
+  const params = await searchParams
 
   return (
     <>
@@ -20,7 +20,7 @@ async function ErrorContent({
         </p>
       )}
     </>
-  );
+  )
 }
 
 export default function Page({
@@ -47,5 +47,5 @@ export default function Page({
         </div>
       </div>
     </div>
-  );
+  )
 }

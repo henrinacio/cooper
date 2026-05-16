@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { LessonForm } from "../lesson-form";
-import { ArrowLeft } from "lucide-react";
+import { createClient } from "@/lib/supabase/server"
+import { redirect, notFound } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { LessonForm } from "../lesson-form"
+import { ArrowLeft } from "lucide-react"
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,23 +11,23 @@ interface Props {
 }
 
 export default async function NewLessonPage({ params, searchParams }: Props) {
-  const { id } = await params;
-  const { moduleId } = await searchParams;
+  const { id } = await params
+  const { moduleId } = await searchParams
 
-  if (!moduleId) notFound();
+  if (!moduleId) notFound()
 
-  const supabase = await createClient();
-  const { data: claims } = await supabase.auth.getClaims();
-  if (!claims?.claims) redirect("/auth/login");
+  const supabase = await createClient()
+  const { data: claims } = await supabase.auth.getClaims()
+  if (!claims?.claims) redirect("/auth/login")
 
   const { data: module } = await supabase
     .from("modules")
     .select("id, title, course_id")
     .eq("id", moduleId)
     .eq("course_id", id)
-    .single();
+    .single()
 
-  if (!module) notFound();
+  if (!module) notFound()
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,5 +47,5 @@ export default async function NewLessonPage({ params, searchParams }: Props) {
 
       <LessonForm courseId={id} moduleId={moduleId} />
     </div>
-  );
+  )
 }

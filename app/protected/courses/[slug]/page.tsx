@@ -1,44 +1,44 @@
-import { createClient } from "@/lib/supabase/server";
-import { CourseWithModules } from "@/lib/supabase/types";
-import { notFound, redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/lib/supabase/server"
+import { CourseWithModules } from "@/lib/supabase/types"
+import { notFound, redirect } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { BookOpen, Clock } from "lucide-react";
-import Link from "next/link";
-import { BackButton } from "@/components/back-button";
+} from "@/components/ui/card"
+import { BookOpen, Clock } from "lucide-react"
+import Link from "next/link"
+import { BackButton } from "@/components/back-button"
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { slug } = await params;
-  return { title: slug };
+  const { slug } = await params
+  return { title: slug }
 }
 
 export default async function CourseDetailPage({ params }: Props) {
-  const { slug } = await params;
-  const supabase = await createClient();
+  const { slug } = await params
+  const supabase = await createClient()
 
-  const { data } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims()
 
   if (!data?.claims) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
-  const userId = data.claims.sub as string;
+  const userId = data.claims.sub as string
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", userId)
-    .single();
+    .single()
 
   // RLS ensures this returns null if the user has no access
   const { data: course } = await supabase
@@ -49,16 +49,16 @@ export default async function CourseDetailPage({ params }: Props) {
     .eq("slug", slug)
     .order("order", { referencedTable: "modules" })
     .order("order", { referencedTable: "modules.lessons" })
-    .single<CourseWithModules>();
+    .single<CourseWithModules>()
 
-  if (!course) notFound();
+  if (!course) notFound()
 
   const totalLessons = course.modules.reduce(
     (acc, m) => acc + m.lessons.length,
     0,
-  );
+  )
 
-  const firstLesson = course.modules[0]?.lessons[0];
+  const firstLesson = course.modules[0]?.lessons[0]
 
   const isPrivileged = profile ? ['instructor', 'admin'].includes(profile.role) : false
 
@@ -138,5 +138,5 @@ export default async function CourseDetailPage({ params }: Props) {
         ))}
       </div>
     </div>
-  );
+  )
 }

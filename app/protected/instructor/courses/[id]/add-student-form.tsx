@@ -1,34 +1,34 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { addStudentToCourse } from "./actions";
-import { UserPlus } from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { addStudentToCourse } from "./actions"
+import { UserPlus } from "lucide-react"
 
 export function AddStudentForm({ courseId }: { courseId: string }) {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [email, setEmail] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-    setLoading(true);
+  async function submit(e: React.SyntheticEvent) {
+    e.preventDefault()
+    setError(null)
+    setSuccess(null)
+    setLoading(true)
 
-    const result = await addStudentToCourse(courseId, email.trim());
+    const result = await addStudentToCourse(courseId, email.trim())
 
     if (result.error) {
-      setError(result.error);
+      setError(result.error)
     } else {
-      setSuccess(`${email} enrolled successfully`);
-      setEmail("");
+      setSuccess(`${email} enrolled successfully`)
+      setEmail("")
     }
 
-    setLoading(false);
+    setLoading(false)
   }
 
   return (
@@ -52,5 +52,5 @@ export function AddStudentForm({ courseId }: { courseId: string }) {
       {error && <p className="text-sm text-destructive">{error}</p>}
       {success && <p className="text-sm text-green-600 dark:text-green-400">{success}</p>}
     </form>
-  );
+  )
 }

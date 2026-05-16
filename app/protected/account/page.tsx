@@ -1,9 +1,9 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Suspense } from "react";
-import { LogoutButton } from "@/components/logout-button";
+import { redirect } from "next/navigation"
+import { createClient } from "@/lib/supabase/server"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ThemeSwitcher } from "@/components/theme-switcher"
+import { Suspense } from "react"
+import { LogoutButton } from "@/components/logout-button"
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -11,23 +11,23 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="text-sm text-muted-foreground">{label}</span>
       <span className="text-sm font-medium">{value}</span>
     </div>
-  );
+  )
 }
 
 async function AccountDetails() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.getUser()
 
   if (error || !data) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
-  const name = data.user.user_metadata?.full_name ?? data.user.user_metadata?.name ?? "—";
+  const name = data.user.user_metadata?.full_name ?? data.user.user_metadata?.name ?? "—"
   const joinedDate = new Date(data.user.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
+  })
 
   return (
     <Card>
@@ -66,6 +66,6 @@ export default function AccountPage() {
 
       <LogoutButton />
     </div>
-  );
+  )
 }
 

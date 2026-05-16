@@ -1,16 +1,16 @@
-import { Suspense } from "react";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
+import { Suspense } from "react"
+import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation"
+import Link from "next/link"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BookOpen } from "lucide-react";
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { BookOpen } from "lucide-react"
 
 type Course = {
   id: string;
@@ -20,23 +20,23 @@ type Course = {
   modules: { lessons: { id: string }[] | null }[] | null;
 };
 
-export const metadata = { title: "Dashboard" };
+export const metadata = { title: "Dashboard" }
 
 async function CourseList() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.getClaims()
 
   if (error || !data?.claims) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
-  const userId = data.claims.sub as string;
+  const userId = data.claims.sub as string
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", userId)
-    .single();
+    .single()
 
   if (profile && ["instructor", "admin"].includes(profile.role)) {
     redirect("/protected/instructor/courses")
@@ -46,14 +46,14 @@ async function CourseList() {
     .from("enrollments")
     .select("course_id, enrolled_at, courses(id, slug, title, description, modules(lessons(id)))")
     .eq("user_id", userId)
-    .order("enrolled_at", { ascending: false });
+    .order("enrolled_at", { ascending: false })
 
   const { data: progressRows } = await supabase
     .from("progress")
     .select("lesson_id")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
 
-  const completedIds = new Set(progressRows?.map((p) => p.lesson_id) ?? []);
+  const completedIds = new Set(progressRows?.map((p) => p.lesson_id) ?? [])
 
   if (!enrollments?.length) {
     return (
@@ -64,21 +64,21 @@ async function CourseList() {
           <Link href="/protected/courses">Browse Courses</Link>
         </Button>
       </div>
-    );
+    )
   }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {enrollments.map((enrollment) => {
-        const course = enrollment.courses as unknown as Course | null;
-        if (!course) return null;
+        const course = enrollment.courses as unknown as Course | null
+        if (!course) return null
 
         const allLessons: string[] = course.modules?.flatMap(
           (m) => m.lessons?.map((l) => l.id) ?? [],
-        ) ?? [];
-        const completed = allLessons.filter((id) => completedIds.has(id)).length;
-        const total = allLessons.length;
-        const pct = total ? Math.round((completed / total) * 100) : 0;
+        ) ?? []
+        const completed = allLessons.filter((id) => completedIds.has(id)).length
+        const total = allLessons.length
+        const pct = total ? Math.round((completed / total) * 100) : 0
 
         return (
           <Card key={enrollment.course_id} className="flex flex-col">
@@ -108,10 +108,10 @@ async function CourseList() {
               </Button>
             </CardContent>
           </Card>
-        );
+        )
       })}
     </div>
-  );
+  )
 }
 
 export default function DashboardPage() {
@@ -125,5 +125,5 @@ export default function DashboardPage() {
         <CourseList />
       </Suspense>
     </div>
-  );
+  )
 }

@@ -1,26 +1,31 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { createModule } from "./actions";
-import { PlusCircle, X } from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { createModule } from "./actions"
+import { PlusCircle, X } from "lucide-react"
 
 export function AddModuleForm({ courseId }: { courseId: string }) {
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false)
+  const [title, setTitle] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    const result = await createModule(courseId, title.trim());
-    setLoading(false);
-    if (result.error) { setError(result.error); return; }
-    setTitle("");
-    setOpen(false);
+  async function submit(e: React.SyntheticEvent) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+    const result = await createModule(courseId, title.trim())
+    setLoading(false)
+
+    if (result.error) {
+      setError(result.error)
+      return
+    }
+
+    setTitle("")
+    setOpen(false)
   }
 
   if (!open) {
@@ -29,7 +34,12 @@ export function AddModuleForm({ courseId }: { courseId: string }) {
         <PlusCircle size={14} />
         Add Module
       </Button>
-    );
+    )
+  }
+
+  function handleClose() {
+    setOpen(false)
+    setError(null)
   }
 
   return (
@@ -49,11 +59,11 @@ export function AddModuleForm({ courseId }: { courseId: string }) {
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => { setOpen(false); setError(null); }}
+        onClick={handleClose}
       >
         <X size={14} />
       </Button>
       {error && <p className="text-sm text-destructive">{error}</p>}
     </form>
-  );
+  )
 }

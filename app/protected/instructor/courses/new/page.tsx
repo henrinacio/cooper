@@ -1,25 +1,25 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/back-button";
-import { NewCourseForm } from "./new-course-form";
+import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { BackButton } from "@/components/back-button"
+import { NewCourseForm } from "./new-course-form"
 
-export const metadata = { title: "New Course" };
+export const metadata = { title: "New Course" }
 
 export default async function NewCoursePage() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  if (!data?.claims) redirect("/auth/login");
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+  if (!data?.claims) redirect("/auth/login")
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", data.claims.sub as string)
-    .single();
+    .single()
 
   if (!profile || !["instructor", "admin"].includes(profile.role)) {
-    redirect("/protected/dashboard");
+    redirect("/protected/dashboard")
   }
 
   return (
@@ -32,5 +32,5 @@ export default async function NewCoursePage() {
       </div>
       <NewCourseForm />
     </div>
-  );
+  )
 }

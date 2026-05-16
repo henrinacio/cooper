@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { removeStudentFromCourse } from "./actions";
-import { X } from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { removeStudentFromCourse } from "./actions"
+import { X } from "lucide-react"
 
 interface Props {
   courseId: string;
@@ -11,11 +11,11 @@ interface Props {
 }
 
 export function RemoveStudentButton({ courseId, enrollmentId }: Props) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   async function remove() {
-    setLoading(true);
-    await removeStudentFromCourse(courseId, enrollmentId);
+    setLoading(true)
+    await removeStudentFromCourse(courseId, enrollmentId)
     // revalidatePath in action refreshes the page
   }
 
@@ -29,5 +29,5 @@ export function RemoveStudentButton({ courseId, enrollmentId }: Props) {
     >
       <X size={14} />
     </Button>
-  );
+  )
 }

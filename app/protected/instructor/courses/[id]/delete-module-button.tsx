@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { deleteModule } from "./actions";
-import { Trash2 } from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { deleteModule } from "./actions"
+import { Trash2 } from "lucide-react"
 
 interface Props {
   courseId: string;
@@ -11,12 +11,12 @@ interface Props {
 }
 
 export function DeleteModuleButton({ courseId, moduleId }: Props) {
-  const [confirming, setConfirming] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [confirming, setConfirming] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   async function remove() {
-    setLoading(true);
-    await deleteModule(courseId, moduleId);
+    setLoading(true)
+    await deleteModule(courseId, moduleId)
   }
 
   if (confirming) {
@@ -41,7 +41,7 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
           No
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -53,5 +53,5 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
     >
       <Trash2 size={13} />
     </Button>
-  );
+  )
 }

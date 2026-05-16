@@ -1,5 +1,5 @@
-import { HardHat } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { HardHat } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface UnderConstructionProps {
   message?: string;
@@ -20,5 +20,5 @@ export function UnderConstruction({
       <HardHat size={18} className="mt-0.5 shrink-0" />
       <p className="text-sm">{message}</p>
     </div>
-  );
+  )
 }

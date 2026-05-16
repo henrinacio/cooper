@@ -1,40 +1,40 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
-import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Plus } from "lucide-react"
+import { Suspense } from "react"
 
-export const metadata = { title: "My Courses" };
+export const metadata = { title: "My Courses" }
 
 async function CourseList() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
-  const { data, error } = await supabase.auth.getClaims();
+  const { data, error } = await supabase.auth.getClaims()
 
   if (error || !data?.claims) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
-  const userId = data.claims.sub as string;
+  const userId = data.claims.sub as string
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", userId)
-    .single();
+    .single()
 
   if (!profile || !["instructor", "admin"].includes(profile.role)) {
-    redirect("/protected/dashboard");
+    redirect("/protected/dashboard")
   }
 
   const { data: courses } = await supabase
     .from("courses")
     .select("*, enrollments(count)")
     .eq("instructor_id", userId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
 
   if (!courses?.length) {
     return (
@@ -71,7 +71,7 @@ async function CourseList() {
               </Button>
             </div>
           </Card>
-        );
+        )
       })}
     </div>
   )
@@ -96,5 +96,5 @@ export default async function InstructorCoursesPage() {
         <CourseList />
       </Suspense>
     </div>
-  );
+  )
 }

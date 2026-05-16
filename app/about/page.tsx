@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { BackButton } from "@/components/back-button";
-import { Suspense } from "react";
-import { AuthButton } from "@/components/auth-button";
-import { version } from "@/package.json";
+import Link from "next/link"
+import { ThemeSwitcher } from "@/components/theme-switcher"
+import { BackButton } from "@/components/back-button"
+import { Suspense } from "react"
+import { AuthButton } from "@/components/auth-button"
+import { version } from "@/package.json"
 
 export default function AboutPage() {
   return (
@@ -44,5 +44,5 @@ export default function AboutPage() {
         <ThemeSwitcher />
       </footer>
     </main>
-  );
+  )
 }

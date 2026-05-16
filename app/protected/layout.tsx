@@ -1,20 +1,20 @@
-import { createClient } from "@/lib/supabase/server";
-import { Suspense } from "react";
-import BottomNav from "@/components/navigation/bottom-nav";
-import SidebarNav from "@/components/navigation/sidebar-nav";
+import { createClient } from "@/lib/supabase/server"
+import { Suspense } from "react"
+import BottomNav from "@/components/navigation/bottom-nav"
+import SidebarNav from "@/components/navigation/sidebar-nav"
 
 async function DefaultLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  let role: string | null = null;
+  const supabase = await createClient()
+  let role: string | null = null
 
-  const { data } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims()
   if (data?.claims?.sub) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", data.claims.sub)
-      .single();
-    role = profile?.role ?? null;
+      .single()
+    role = profile?.role ?? null
   }
 
   return (
@@ -39,5 +39,5 @@ export default async function ProtectedLayout({ children }: { children: React.Re
         <DefaultLayout>{children}</DefaultLayout>
       </Suspense>
     </main>
-  );
+  )
 }

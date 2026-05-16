@@ -1,28 +1,28 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
-import { Lesson, ModuleWithLessons } from "@/lib/supabase/types";
-import Link from "next/link";
-import { cn, toEmbedUrl } from "@/lib/utils";
-import { CheckCircle, BookOpen, ArrowLeft } from "lucide-react";
-import { CompleteButton } from "./complete-button";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server"
+import { redirect, notFound } from "next/navigation"
+import { Lesson, ModuleWithLessons } from "@/lib/supabase/types"
+import Link from "next/link"
+import { cn, toEmbedUrl } from "@/lib/utils"
+import { CheckCircle, BookOpen, ArrowLeft } from "lucide-react"
+import { CompleteButton } from "./complete-button"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 interface Props {
   params: Promise<{ course: string; lesson: string }>;
 }
 
 export default async function LessonPage({ params }: Props) {
-  const { course: courseSlug, lesson: lessonId } = await params;
-  const supabase = await createClient();
+  const { course: courseSlug, lesson: lessonId } = await params
+  const supabase = await createClient()
 
-  const { data } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims()
 
   if (!data?.claims) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
-  const userId = data.claims.sub as string;
+  const userId = data.claims.sub as string
 
   const [{ data: course }, { data: profile }] = await Promise.all([
     supabase
@@ -37,11 +37,11 @@ export default async function LessonPage({ params }: Props) {
       .select("role")
       .eq("id", userId)
       .single(),
-  ]);
+  ])
 
-  if (!course) notFound();
+  if (!course) notFound()
 
-  const isPrivileged = profile?.role === "admin" || (profile?.role === "instructor" && course.instructor_id === userId);
+  const isPrivileged = profile?.role === "admin" || (profile?.role === "instructor" && course.instructor_id === userId)
 
   if (!isPrivileged) {
     const { data: enrollment } = await supabase
@@ -49,34 +49,34 @@ export default async function LessonPage({ params }: Props) {
       .select("id")
       .eq("course_id", course.id)
       .eq("user_id", userId)
-      .maybeSingle();
+      .maybeSingle()
 
-    if (!enrollment) notFound();
+    if (!enrollment) notFound()
   }
 
   const { data: lesson } = await supabase
     .from("lessons")
     .select("*")
     .eq("id", lessonId)
-    .single<Lesson>();
+    .single<Lesson>()
 
-  if (!lesson) notFound();
+  if (!lesson) notFound()
 
   const { data: progressRows } = await supabase
     .from("progress")
     .select("lesson_id")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
 
-  const completedIds = new Set(progressRows?.map((p) => p.lesson_id) ?? []);
+  const completedIds = new Set(progressRows?.map((p) => p.lesson_id) ?? [])
 
   const allLessons = (course.modules as ModuleWithLessons[]).flatMap(
     (m) => m.lessons,
-  );
+  )
 
-  const currentIdx = allLessons.findIndex((l) => l.id === lessonId);
+  const currentIdx = allLessons.findIndex((l) => l.id === lessonId)
 
-  const nextLesson = allLessons[currentIdx + 1];
-  const prevLesson = allLessons[currentIdx - 1];
+  const nextLesson = allLessons[currentIdx + 1]
+  const prevLesson = allLessons[currentIdx - 1]
 
   return (
     <div className="flex gap-6 min-h-[calc(100vh-4rem)]">
@@ -91,8 +91,8 @@ export default async function LessonPage({ params }: Props) {
               {mod.title}
             </p>
             {mod.lessons.map((l) => {
-              const isActive = l.id === lessonId;
-              const isDone = completedIds.has(l.id);
+              const isActive = l.id === lessonId
+              const isDone = completedIds.has(l.id)
               return (
                 <Link
                   key={l.id}
@@ -111,7 +111,7 @@ export default async function LessonPage({ params }: Props) {
                   )}
                   <span className="line-clamp-1">{l.title}</span>
                 </Link>
-              );
+              )
             })}
           </div>
         ))}
@@ -165,5 +165,5 @@ export default async function LessonPage({ params }: Props) {
         />
       </div>
     </div>
-  );
+  )
 }

@@ -1,23 +1,23 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Geist } from "next/font/google"
+import { ThemeProvider } from "next-themes"
+import "./globals.css"
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+  : "http://localhost:3000"
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: { default: "Cooper", template: "%s | Cooper" },
   description: "Learn anything. At your own pace.",
-};
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   display: "swap",
   subsets: ["latin"],
-});
+})
 
 export default function RootLayout({
   children,
@@ -37,5 +37,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
