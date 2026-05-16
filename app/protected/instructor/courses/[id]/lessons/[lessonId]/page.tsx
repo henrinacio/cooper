@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import { LessonForm } from "../lesson-form";
 import { Lesson } from "@/lib/supabase/types";
 
@@ -35,12 +35,7 @@ export default async function EditLessonPage({ params }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="sm">
-          <Link href={`/protected/instructor/courses/${id}`}>
-            <ArrowLeft size={14} />
-            Back to course
-          </Link>
-        </Button>
+        <BackButton />
       </div>
 
       <div>

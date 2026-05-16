@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/back-button";
 import { Suspense } from "react";
 import { AuthButton } from "@/components/auth-button";
 import { version } from "@/package.json";
@@ -24,9 +24,7 @@ export default function AboutPage() {
       <section className="flex flex-col items-center text-center gap-6 px-5 py-24">
         <h1 className="text-5xl font-bold tracking-tight">Cooper</h1>
         <p className="text-muted-foreground text-sm">Version {version}</p>
-        <Button asChild variant="outline">
-          <Link href="/">Back to home</Link>
-        </Button>
+        <BackButton />
       </section>
 
       <section className="flex justify-center px-5 pb-24">

@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import { NewCourseForm } from "./new-course-form";
 
 export const metadata = { title: "New Course" };
@@ -24,12 +24,7 @@ export default async function NewCoursePage() {
 
   return (
     <div className="max-w-xl flex flex-col gap-6">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link href="/protected/instructor/courses">
-          <ArrowLeft size={14} />
-          Back
-        </Link>
-      </Button>
+      <BackButton />
 
       <div>
         <h1 className="text-3xl font-bold">New Course</h1>

@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BookOpen, Clock, ArrowLeft } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
 import Link from "next/link";
+import { BackButton } from "@/components/back-button";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -63,12 +64,7 @@ export default async function CourseDetailPage({ params }: Props) {
 
   return (
     <div className="flex flex-col gap-8">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link href="/protected/dashboard">
-          <ArrowLeft size={14} />
-          Back
-        </Link>
-      </Button>
+      <BackButton />
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, ArrowLeft, Users, Pencil, PlusCircle } from "lucide-react";
+import { BookOpen, Users, Pencil, PlusCircle } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import { PublishToggle } from "./publish-toggle";
 import { AddStudentForm } from "./add-student-form";
 import { RemoveStudentButton } from "./remove-student-button";
@@ -49,12 +50,7 @@ export default async function EditCoursePage({ params }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/protected/instructor/courses">
-            <ArrowLeft size={14} />
-            Back
-          </Link>
-        </Button>
+        <BackButton />
       </div>
 
       {/* Course header */}
