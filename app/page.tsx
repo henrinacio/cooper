@@ -4,8 +4,32 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, BarChart2, Award } from "lucide-react";
 import { Suspense } from "react";
 import { AuthButton } from "@/components/auth-button";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+
+  const { data } = await supabase.auth.getClaims();
+
+  if (data) {
+    const userId = data?.claims.sub as string;
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (profile && ["instructor", "admin"].includes(profile.role)) {
+      redirect("/protected/instructor/courses")
+    }
+
+    if (profile && profile.role === 'student') {
+      redirect("/protected/dashboard")
+    }
+  }
+
   return (
     <main className="min-h-screen flex flex-col">
       <nav className="w-full border-b border-b-foreground/10 h-16 flex justify-center">
