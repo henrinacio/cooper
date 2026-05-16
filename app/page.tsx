@@ -7,14 +7,12 @@ import { AuthButton } from "@/components/auth-button";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function Home() {
+async function AuthRedirect() {
   const supabase = await createClient();
-
   const { data } = await supabase.auth.getClaims();
 
   if (data) {
-    const userId = data?.claims.sub as string;
-
+    const userId = data.claims.sub as string;
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -22,16 +20,22 @@ export default async function Home() {
       .single();
 
     if (profile && ["instructor", "admin"].includes(profile.role)) {
-      redirect("/protected/instructor/courses")
+      redirect("/protected/instructor/courses");
     }
-
-    if (profile && profile.role === 'student') {
-      redirect("/protected/dashboard")
+    if (profile && profile.role === "student") {
+      redirect("/protected/dashboard");
     }
   }
 
+  return null;
+}
+
+export default async function Home() {
   return (
     <main className="min-h-screen flex flex-col">
+      <Suspense>
+        <AuthRedirect />
+      </Suspense>
       <nav className="w-full border-b border-b-foreground/10 h-16 flex justify-center">
         <div className="w-full max-w-5xl flex justify-between items-center px-5 text-sm">
           <div className="flex gap-6 items-center font-semibold">
