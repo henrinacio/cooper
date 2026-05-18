@@ -151,7 +151,7 @@ export default async function EditCoursePage({ params }: Props) {
         {!!enrollments?.length && (
           <div className="flex flex-col gap-1 mt-2">
             {enrollments.map((enrollment) => {
-              const profile = (enrollment.profiles as EnrollmentProfile[] | null)?.[0]
+              const studentFullName = (enrollment.profiles as unknown as EnrollmentProfile)?.full_name
               return (
                 <div
                   key={enrollment.id}
@@ -159,7 +159,7 @@ export default async function EditCoursePage({ params }: Props) {
                 >
                   <div className="flex flex-col">
                     <span className="font-medium">
-                      {profile?.full_name ?? "—"}
+                      {studentFullName ?? "—"}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {t.enrolled} {new Date(enrollment.enrolled_at).toLocaleDateString()}
