@@ -19,7 +19,10 @@ export default async function CourseProgressPage({ params }: Props) {
   const supabase = await createClient()
 
   const { data } = await supabase.auth.getClaims()
-  if (!data?.claims) redirect("/auth/login")
+
+  if (!data?.claims) {
+    redirect("/auth/login")
+  }
 
   const { data: course } = await supabase
     .from("courses")
@@ -30,7 +33,9 @@ export default async function CourseProgressPage({ params }: Props) {
     .order("order", { referencedTable: "modules.lessons" })
     .single<CourseWithModules>()
 
-  if (!course) notFound()
+  if (!course) {
+    notFound()
+  }
 
   const { data: enrollments } = await supabase
     .from("enrollments")
@@ -38,11 +43,12 @@ export default async function CourseProgressPage({ params }: Props) {
     .eq("course_id", id)
     .order("enrolled_at", { ascending: false })
 
-  const totalLessons = course.modules.reduce((sum, m) => sum + m.lessons.length, 0)
-  const lessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id))
-  const studentIds = (enrollments ?? []).map((e) => e.user_id)
+  const totalLessons = course.modules.reduce((sum, module) => sum + module.lessons.length, 0)
+  const lessonIds = course.modules.flatMap((module) => module.lessons.map((lesson) => lesson.id))
+  const studentIds = (enrollments ?? []).map((enrollment) => enrollment.user_id)
 
   let progressRecords: { user_id: string; lesson_id: string; completed_at: string }[] = []
+
   if (lessonIds.length > 0 && studentIds.length > 0) {
     const { data: progress } = await supabase
       .from("progress")
@@ -73,17 +79,17 @@ export default async function CourseProgressPage({ params }: Props) {
           {enrollments.map((enrollment) => {
             const profile = enrollment.profiles as unknown as EnrollmentProfile
             const studentProgress = progressRecords.filter(
-              (p) => p.user_id === enrollment.user_id
+              (progress) => progress.user_id === enrollment.user_id
             )
             const completedIds = new Set(studentProgress.map((p) => p.lesson_id))
             const completedCount = studentProgress.length
-            const pct =
+            const percentage =
               totalLessons > 0
                 ? Math.round((completedCount / totalLessons) * 100)
                 : 0
             const lastActivityTs = studentProgress.length
               ? Math.max(
-                  ...studentProgress.map((p) => new Date(p.completed_at).getTime())
+                  ...studentProgress.map((progress) => new Date(progress.completed_at).getTime())
                 )
               : null
 
@@ -95,11 +101,11 @@ export default async function CourseProgressPage({ params }: Props) {
                       {profile?.full_name ?? "—"}
                     </CardTitle>
                     <div className="flex items-center gap-2">
-                      <Badge variant={pct === 100 ? "default" : "outline"}>
+                      <Badge variant={percentage === 100 ? "default" : "outline"}>
                         {completedCount}/{totalLessons} {t.lessons}
                       </Badge>
                       <span className="text-sm font-medium text-muted-foreground">
-                        {pct}%
+                        {percentage}%
                       </span>
                     </div>
                   </div>
@@ -107,7 +113,7 @@ export default async function CourseProgressPage({ params }: Props) {
                   <div className="w-full h-2 bg-muted rounded-full mt-2 overflow-hidden">
                     <div
                       className="h-full bg-primary rounded-full transition-all"
-                      style={{ width: `${pct}%` }}
+                      style={{ width: `${percentage}%` }}
                     />
                   </div>
 
@@ -121,8 +127,8 @@ export default async function CourseProgressPage({ params }: Props) {
 
                 <CardContent className="flex flex-col gap-4 pt-0">
                   {course.modules.map((module) => {
-                    const completedInModule = module.lessons.filter((l) =>
-                      completedIds.has(l.id)
+                    const completedInModule = module.lessons.filter((lesson) =>
+                      completedIds.has(lesson.id)
                     ).length
 
                     return (
