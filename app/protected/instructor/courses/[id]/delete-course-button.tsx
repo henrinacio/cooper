@@ -10,17 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { deleteLesson } from "./actions"
+import { deleteCourse } from "./actions"
 import { Trash2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
-import { translations } from "./delete-lesson-button.i18n"
+import { translations } from "./delete-course-button.i18n"
 
 interface Props {
   courseId: string;
-  lessonId: string;
 }
 
-export function DeleteLessonButton({ courseId, lessonId }: Props) {
+export function DeleteCourseButton({ courseId }: Props) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -29,7 +28,7 @@ export function DeleteLessonButton({ courseId, lessonId }: Props) {
 
   async function remove() {
     setLoading(true)
-    await deleteLesson(courseId, lessonId)
+    await deleteCourse(courseId)
   }
 
   return (
@@ -38,7 +37,7 @@ export function DeleteLessonButton({ courseId, lessonId }: Props) {
         variant="ghost"
         size="sm"
         onClick={() => setOpen(true)}
-        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+        className="text-muted-foreground hover:text-destructive"
       >
         <Trash2 size={16} />
       </Button>

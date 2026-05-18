@@ -14,6 +14,8 @@ import { AddModuleForm } from "./add-module-form"
 import { DeleteModuleButton } from "./delete-module-button"
 import { DeleteLessonButton } from "./delete-lesson-button"
 import { RenameModuleButton } from "./rename-module-button"
+import { EditCourseHeader } from "./edit-course-header"
+import { DeleteCourseButton } from "./delete-course-button"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 
@@ -42,7 +44,9 @@ export default async function EditCoursePage({ params }: Props) {
     .order("order", { referencedTable: "modules.lessons" })
     .single<CourseWithModules>()
 
-  if (!course) notFound()
+  if (!course) {
+    notFound()
+  }
 
   const { data: enrollments } = await supabase
     .from("enrollments")
@@ -55,24 +59,18 @@ export default async function EditCoursePage({ params }: Props) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between">
         <BackButton href="/protected/instructor/courses" />
-      </div>
-
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{course.title}</h1>
-          {course.description && (
-            <p className="text-muted-foreground mt-1">{course.description}</p>
-          )}
-        </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" size="sm">
             <Link href={`/protected/courses/${course.slug}`}>{t.preview}</Link>
           </Button>
           <PublishToggle courseId={course.id} published={course.published} />
+          <DeleteCourseButton courseId={course.id} />
         </div>
       </div>
+
+      <EditCourseHeader courseId={course.id} title={course.title} description={course.description} />
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -102,7 +100,7 @@ export default async function EditCoursePage({ params }: Props) {
                     key={lesson.id}
                     className="flex items-center gap-2 text-sm py-1 px-2 rounded hover:bg-accent group"
                   >
-                    <BookOpen size={13} className="text-muted-foreground shrink-0" />
+                    <BookOpen size={16} className="text-muted-foreground shrink-0" />
                     <span className="flex-1">{lesson.title}</span>
                     <Badge variant="outline" className="text-xs capitalize">
                       {lesson.type}
@@ -111,7 +109,7 @@ export default async function EditCoursePage({ params }: Props) {
                       href={`/protected/instructor/courses/${course.id}/lessons/${lesson.id}`}
                     >
                       <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                        <Pencil size={12} />
+                        <Pencil size={16} />
                       </Button>
                     </Link>
                     <DeleteLessonButton courseId={course.id} lessonId={lesson.id} />
@@ -123,7 +121,7 @@ export default async function EditCoursePage({ params }: Props) {
                   className="mt-1"
                 >
                   <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground">
-                    <PlusCircle size={13} />
+                    <PlusCircle size={16} />
                     {t.addLesson}
                   </Button>
                 </Link>
@@ -136,7 +134,7 @@ export default async function EditCoursePage({ params }: Props) {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users size={18} />
+            <Users size={24} />
             <h2 className="text-xl font-semibold">
               {t.students}
               <span className="ml-2 text-sm font-normal text-muted-foreground">
@@ -146,7 +144,7 @@ export default async function EditCoursePage({ params }: Props) {
           </div>
           <Button asChild variant="outline" size="sm">
             <Link href={`/protected/instructor/courses/${id}/progress`}>
-              <BarChart2 size={14} />
+              <BarChart2 size={16} />
               {t.viewProgress}
             </Link>
           </Button>

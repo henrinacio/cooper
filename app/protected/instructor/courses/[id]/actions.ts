@@ -2,7 +2,57 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { LessonType } from "@/lib/supabase/types"
+
+// ---- course -----------------------------------------------------------------
+
+export async function deleteCourse(courseId: string): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    return { error: "Not authenticated" }
+  }
+
+  const { error } = await supabase
+    .from("courses")
+    .delete()
+    .eq("id", courseId)
+    .eq("instructor_id", data.claims.sub as string)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  redirect("/protected/instructor/courses")
+}
+
+export async function updateCourse(
+  courseId: string,
+  title: string,
+  description: string | null,
+): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    return { error: "Not authenticated" }
+  }
+
+  const { error } = await supabase
+    .from("courses")
+    .update({ title, description })
+    .eq("id", courseId)
+    .eq("instructor_id", data.claims.sub as string)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`)
+  return {}
+}
 
 // ---- modules ----------------------------------------------------------------
 

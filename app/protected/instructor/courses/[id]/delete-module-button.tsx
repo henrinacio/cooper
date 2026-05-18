@@ -2,6 +2,14 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { deleteModule } from "./actions"
 import { Trash2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
@@ -13,7 +21,7 @@ interface Props {
 }
 
 export function DeleteModuleButton({ courseId, moduleId }: Props) {
-  const [confirming, setConfirming] = useState(false)
+  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const locale = useLocale()
@@ -24,39 +32,33 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
     await deleteModule(courseId, moduleId)
   }
 
-  if (confirming) {
-    return (
-      <div className="flex items-center gap-1">
-        <span className="text-xs text-muted-foreground">{t.confirm}</span>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={remove}
-          disabled={loading}
-          className="h-6 text-xs px-2"
-        >
-          {loading ? "…" : t.yes}
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setConfirming(false)}
-          className="h-6 text-xs px-2"
-        >
-          {t.no}
-        </Button>
-      </div>
-    )
-  }
-
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => setConfirming(true)}
-      className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-    >
-      <Trash2 size={13} />
-    </Button>
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setOpen(true)}
+        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+      >
+        <Trash2 size={16} />
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.title}</DialogTitle>
+            <DialogDescription>{t.confirm}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+              {t.no}
+            </Button>
+            <Button variant="destructive" onClick={remove} disabled={loading}>
+              {loading ? "…" : t.yes}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
