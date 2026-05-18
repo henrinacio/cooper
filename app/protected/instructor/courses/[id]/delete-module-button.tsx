@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { deleteModule } from "./actions"
 import { Trash2 } from "lucide-react"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./delete-module-button.i18n"
 
 interface Props {
   courseId: string;
@@ -14,6 +16,9 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
   const [confirming, setConfirming] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const locale = useLocale()
+  const t = translations[locale]
+
   async function remove() {
     setLoading(true)
     await deleteModule(courseId, moduleId)
@@ -22,7 +27,7 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
   if (confirming) {
     return (
       <div className="flex items-center gap-1">
-        <span className="text-xs text-muted-foreground">Delete module and all lessons?</span>
+        <span className="text-xs text-muted-foreground">{t.confirm}</span>
         <Button
           variant="destructive"
           size="sm"
@@ -30,7 +35,7 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
           disabled={loading}
           className="h-6 text-xs px-2"
         >
-          {loading ? "…" : "Yes"}
+          {loading ? "…" : t.yes}
         </Button>
         <Button
           variant="ghost"
@@ -38,7 +43,7 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
           onClick={() => setConfirming(false)}
           className="h-6 text-xs px-2"
         >
-          No
+          {t.no}
         </Button>
       </div>
     )

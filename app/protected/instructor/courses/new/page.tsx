@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { BackButton } from "@/components/back-button"
 import { NewCourseForm } from "./new-course-form"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 export const metadata = { title: "New Course" }
 
@@ -22,13 +22,16 @@ export default async function NewCoursePage() {
     redirect("/protected/dashboard")
   }
 
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <div className="max-w-xl flex flex-col gap-6">
       <BackButton />
 
       <div>
-        <h1 className="text-3xl font-bold">New Course</h1>
-        <p className="text-muted-foreground mt-1">Create a new course</p>
+        <h1 className="text-3xl font-bold">{t.title}</h1>
+        <p className="text-muted-foreground mt-1">{t.subtitle}</p>
       </div>
       <NewCourseForm />
     </div>

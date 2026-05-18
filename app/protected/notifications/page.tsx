@@ -1,9 +1,14 @@
 import { UnderConstruction } from "@/components/under-construction"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <>
-      <UnderConstruction message="Notification feature coming soon..." />
+      <UnderConstruction message={t.comingSoon} />
     </>
   )
 }

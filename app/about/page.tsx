@@ -4,8 +4,13 @@ import { BackButton } from "@/components/back-button"
 import { Suspense } from "react"
 import { AuthButton } from "@/components/auth-button"
 import { version } from "@/package.json"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <main className="min-h-screen flex flex-col">
       <nav className="w-full border-b border-b-foreground/10 h-16 flex justify-center">
@@ -30,12 +35,10 @@ export default function AboutPage() {
       <section className="flex justify-center px-5 pb-24">
         <div className="w-full max-w-md rounded-xl border p-8 flex flex-col gap-4 text-center">
           <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-            Developer
+            {t.developer}
           </p>
           <p className="text-xl font-semibold">Henrique de Godoy Inácio</p>
-          <p className="text-sm text-muted-foreground">
-            Built with Next.js, Supabase, and Tailwind CSS.
-          </p>
+          <p className="text-sm text-muted-foreground">{t.builtWith}</p>
         </div>
       </section>
 

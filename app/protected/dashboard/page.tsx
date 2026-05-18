@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { BookOpen } from "lucide-react"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 type Course = {
   id: string;
@@ -30,6 +32,8 @@ async function CourseList() {
     redirect("/auth/login")
   }
 
+  const locale = await getLocale()
+  const t = translations[locale]
   const userId = data.claims.sub as string
 
   const { data: profile } = await supabase
@@ -59,9 +63,9 @@ async function CourseList() {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <BookOpen size={40} className="text-muted-foreground" />
-        <p className="text-muted-foreground">No courses yet.</p>
+        <p className="text-muted-foreground">{t.noCourses}</p>
         <Button asChild>
-          <Link href="/protected/courses">Browse Courses</Link>
+          <Link href="/protected/courses">{t.browseCourses}</Link>
         </Button>
       </div>
     )
@@ -91,7 +95,7 @@ async function CourseList() {
             <CardContent className="flex flex-col gap-3">
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{completed}/{total} lessons</span>
+                  <span>{completed}/{total} {t.lessons}</span>
                   <span>{pct}%</span>
                 </div>
                 <div className="w-full bg-secondary rounded-full h-1.5">
@@ -103,7 +107,7 @@ async function CourseList() {
               </div>
               <Button asChild size="sm">
                 <Link href={`/protected/courses/${course.slug}`}>
-                  {pct === 100 ? "Review Course" : "Continue"}
+                  {pct === 100 ? t.reviewCourse : t.continue}
                 </Link>
               </Button>
             </CardContent>
@@ -114,14 +118,17 @@ async function CourseList() {
   )
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold">My Learning</h1>
-        <p className="text-muted-foreground mt-1">Your enrolled courses</p>
+        <h1 className="text-3xl font-bold">{t.title}</h1>
+        <p className="text-muted-foreground mt-1">{t.subtitle}</p>
       </div>
-      <Suspense fallback={<div className="text-muted-foreground text-sm">Loading courses…</div>}>
+      <Suspense fallback={<div className="text-muted-foreground text-sm">{t.loading}</div>}>
         <CourseList />
       </Suspense>
     </div>

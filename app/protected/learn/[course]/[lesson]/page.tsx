@@ -7,6 +7,8 @@ import { CheckCircle, BookOpen, ArrowLeft } from "lucide-react"
 import { CompleteButton } from "./complete-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 interface Props {
   params: Promise<{ course: string; lesson: string }>;
@@ -78,9 +80,11 @@ export default async function LessonPage({ params }: Props) {
   const nextLesson = allLessons[currentIdx + 1]
   const prevLesson = allLessons[currentIdx - 1]
 
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <div className="flex gap-6 min-h-[calc(100vh-4rem)]">
-      {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-64 shrink-0 border-r pr-4 gap-2 overflow-y-auto">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2">
           {course.title}
@@ -117,19 +121,18 @@ export default async function LessonPage({ params }: Props) {
         ))}
       </aside>
 
-      {/* Lesson content */}
       <div className="flex-1 flex flex-col gap-6">
         <Button asChild variant="ghost" size="sm" className="w-fit">
           <Link href={`/protected/courses/${courseSlug}`}>
             <ArrowLeft size={14} />
-            Back to course
+            {t.backToCourse}
           </Link>
         </Button>
 
         {isPrivileged && (
           <div>
             <Badge variant="outline" className="text-xs">
-              Preview Mode
+              {t.previewMode}
             </Badge>
           </div>
         )}

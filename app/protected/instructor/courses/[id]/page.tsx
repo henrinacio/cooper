@@ -13,6 +13,8 @@ import { RemoveStudentButton } from "./remove-student-button"
 import { AddModuleForm } from "./add-module-form"
 import { DeleteModuleButton } from "./delete-module-button"
 import { DeleteLessonButton } from "./delete-lesson-button"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 type EnrollmentProfile = { id: string; full_name: string | null };
 
@@ -47,13 +49,15 @@ export default async function EditCoursePage({ params }: Props) {
     .eq("course_id", id)
     .order("enrolled_at", { ascending: false })
 
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
         <BackButton />
       </div>
 
-      {/* Course header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold">{course.title}</h1>
@@ -63,21 +67,20 @@ export default async function EditCoursePage({ params }: Props) {
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link href={`/protected/courses/${course.slug}`}>Preview</Link>
+            <Link href={`/protected/courses/${course.slug}`}>{t.preview}</Link>
           </Button>
           <PublishToggle courseId={course.id} published={course.published} />
         </div>
       </div>
 
-      {/* Curriculum */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Curriculum</h2>
+          <h2 className="text-xl font-semibold">{t.curriculum}</h2>
           <AddModuleForm courseId={course.id} />
         </div>
 
         {!course.modules.length ? (
-          <p className="text-muted-foreground text-sm">No modules yet. Add one above.</p>
+          <p className="text-muted-foreground text-sm">{t.noModules}</p>
         ) : (
           course.modules.map((module) => (
             <Card key={module.id}>
@@ -86,7 +89,7 @@ export default async function EditCoursePage({ params }: Props) {
                   <span>{module.title}</span>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">
-                      {module.lessons.length} lessons
+                      {module.lessons.length} {t.lessonsLabel}
                     </Badge>
                     <DeleteModuleButton courseId={course.id} moduleId={module.id} />
                   </div>
@@ -123,7 +126,7 @@ export default async function EditCoursePage({ params }: Props) {
                 >
                   <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground">
                     <PlusCircle size={13} />
-                    Add lesson
+                    {t.addLesson}
                   </Button>
                 </Link>
               </CardContent>
@@ -132,12 +135,11 @@ export default async function EditCoursePage({ params }: Props) {
         )}
       </div>
 
-      {/* Students */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <Users size={18} />
           <h2 className="text-xl font-semibold">
-            Students
+            {t.students}
             <span className="ml-2 text-sm font-normal text-muted-foreground">
               ({enrollments?.length ?? 0})
             </span>
@@ -160,7 +162,7 @@ export default async function EditCoursePage({ params }: Props) {
                       {profile?.full_name ?? "—"}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      Enrolled {new Date(enrollment.enrolled_at).toLocaleDateString()}
+                      {t.enrolled} {new Date(enrollment.enrolled_at).toLocaleDateString()}
                     </span>
                   </div>
                   <RemoveStudentButton

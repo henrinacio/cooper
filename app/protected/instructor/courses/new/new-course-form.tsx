@@ -7,13 +7,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./new-course-form.i18n"
 
 export function NewCourseForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function submit(e: React.FormEvent<HTMLFormElement>) {
+  const locale = useLocale()
+  const t = translations[locale]
+
+  async function submit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
@@ -50,20 +55,20 @@ export function NewCourseForm() {
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="title">Title</Label>
-        <Input id="title" name="title" required placeholder="Introduction to TypeScript" />
+        <Label htmlFor="title">{t.titleLabel}</Label>
+        <Input id="title" name="title" required placeholder={t.titlePlaceholder} />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="description">Description</Label>
-        <Input id="description" name="description" placeholder="A short description of the course" />
+        <Label htmlFor="description">{t.descriptionLabel}</Label>
+        <Input id="description" name="description" placeholder={t.descriptionPlaceholder} />
       </div>
       <div className="flex items-center gap-2">
         <Checkbox id="published" name="published" />
-        <Label htmlFor="published" className="cursor-pointer">Publish immediately</Label>
+        <Label htmlFor="published" className="cursor-pointer">{t.publishImmediately}</Label>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" disabled={loading}>
-        {loading ? "Creating…" : "Create Course"}
+        {loading ? t.creating : t.createCourse}
       </Button>
     </form>
   )

@@ -12,6 +12,8 @@ import {
 import { BookOpen, Clock } from "lucide-react"
 import Link from "next/link"
 import { BackButton } from "@/components/back-button"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -40,7 +42,6 @@ export default async function CourseDetailPage({ params }: Props) {
     .eq("id", userId)
     .single()
 
-  // RLS ensures this returns null if the user has no access
   const { data: course } = await supabase
     .from("courses")
     .select(
@@ -52,6 +53,9 @@ export default async function CourseDetailPage({ params }: Props) {
     .single<CourseWithModules>()
 
   if (!course) notFound()
+
+  const locale = await getLocale()
+  const t = translations[locale]
 
   const totalLessons = course.modules.reduce(
     (acc, m) => acc + m.lessons.length,
@@ -73,7 +77,7 @@ export default async function CourseDetailPage({ params }: Props) {
             {profile && isPrivileged && (
               <div>
                 <Badge variant="outline" className="text-xs">
-                  Preview Mode
+                  {t.previewMode}
                 </Badge>
               </div>
             )}
@@ -84,7 +88,7 @@ export default async function CourseDetailPage({ params }: Props) {
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
               <BookOpen size={14} />
-              {totalLessons} lessons
+              {totalLessons} {t.lessonsCount}
             </span>
           </div>
         </div>
@@ -93,7 +97,7 @@ export default async function CourseDetailPage({ params }: Props) {
           <div>
             <Button asChild>
               <Link href={`/protected/learn/${course.slug}/${firstLesson.id}`}>
-                Start Learning
+                {t.startLearning}
               </Link>
             </Button>
           </div>
@@ -101,7 +105,7 @@ export default async function CourseDetailPage({ params }: Props) {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold">Curriculum</h2>
+        <h2 className="text-xl font-semibold">{t.curriculum}</h2>
         {course.modules.map((mod) => (
           <Card key={mod.id}>
             <CardHeader className="pb-3">

@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createLesson, updateLesson } from "../actions"
 import { Lesson, LessonType } from "@/lib/supabase/types"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./lesson-form.i18n"
 
 interface Props {
   courseId: string;
@@ -14,17 +16,20 @@ interface Props {
   lesson?: Lesson;
 }
 
-const LESSON_TYPES: { value: LessonType; label: string }[] = [
-  { value: "video", label: "Video" },
-  { value: "text", label: "Text" },
-  { value: "quiz", label: "Quiz" },
-]
-
 export function LessonForm({ courseId, moduleId, lesson }: Props) {
   const router = useRouter()
   const [type, setType] = useState<LessonType>(lesson?.type ?? "text")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const locale = useLocale()
+  const t = translations[locale]
+
+  const LESSON_TYPES: { value: LessonType; label: string }[] = [
+    { value: "video", label: t.video },
+    { value: "text", label: t.text },
+    { value: "quiz", label: t.quiz },
+  ]
 
   const isEdit = !!lesson
 
@@ -33,7 +38,7 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
     return words > 0 ? Math.ceil(words / 200) * 60 : null
   }
 
-  async function submit(e: React.FormEvent<HTMLFormElement>) {
+  async function submit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
@@ -82,31 +87,31 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
   return (
     <form onSubmit={submit} className="flex flex-col gap-5 max-w-lg">
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{t.titleLabel}</Label>
         <Input
           id="title"
           name="title"
           required
           defaultValue={lesson?.title}
-          placeholder="Lesson title"
+          placeholder={t.titlePlaceholder}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label>Type</Label>
+        <Label>{t.typeLabel}</Label>
         <div className="flex gap-2">
-          {LESSON_TYPES.map((t) => (
+          {LESSON_TYPES.map((lt) => (
             <button
-              key={t.value}
+              key={lt.value}
               type="button"
-              onClick={() => setType(t.value)}
+              onClick={() => setType(lt.value)}
               className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                type === t.value
+                type === lt.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "border-border text-muted-foreground hover:bg-accent"
               }`}
             >
-              {t.label}
+              {lt.label}
             </button>
           ))}
         </div>
@@ -115,7 +120,7 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
       {type === "video" && (
         <>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="video_url">Video URL</Label>
+            <Label htmlFor="video_url">{t.videoUrl}</Label>
             <Input
               id="video_url"
               name="video_url"
@@ -125,7 +130,7 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="duration_s">Duration (seconds)</Label>
+            <Label htmlFor="duration_s">{t.duration}</Label>
             <Input
               id="duration_s"
               name="duration_s"
@@ -140,13 +145,13 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
 
       {type !== "video" && (
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="content">Content</Label>
+          <Label htmlFor="content">{t.content}</Label>
           <textarea
             id="content"
             name="content"
             rows={10}
             defaultValue={lesson?.content ?? ""}
-            placeholder={type === "quiz" ? "JSON quiz definition or question text…" : "Lesson content (Markdown supported)"}
+            placeholder={type === "quiz" ? t.quizPlaceholder : t.textPlaceholder}
             className="flex min-h-[160px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y font-mono"
           />
         </div>
@@ -156,14 +161,14 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={loading}>
-          {loading ? "Saving…" : isEdit ? "Save Changes" : "Create Lesson"}
+          {loading ? t.saving : isEdit ? t.saveChanges : t.createLesson}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push(`/protected/instructor/courses/${courseId}`)}
         >
-          Cancel
+          {t.cancel}
         </Button>
       </div>
     </form>

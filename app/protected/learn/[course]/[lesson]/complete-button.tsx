@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Undo2 } from "lucide-react"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./complete-button.i18n"
 
 interface Props {
   lessonId: string;
@@ -20,6 +22,9 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
   const [done, setDone] = useState(completed)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  const locale = useLocale()
+  const t = translations[locale]
 
   async function markComplete() {
     if (done) return
@@ -50,7 +55,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
           className="flex items-center gap-2"
         >
           <CheckCircle size={16} />
-          {done ? "Completed" : loading ? "Saving…" : "Mark Complete"}
+          {done ? t.completed : loading ? t.saving : t.markComplete}
         </Button>
       )}
       {done && (
@@ -62,7 +67,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
           className="flex items-center gap-1 text-muted-foreground"
         >
           <Undo2 size={14} />
-          Undo
+          {t.undo}
         </Button>
       )}
       {prevLessonId && (
@@ -70,7 +75,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
           variant="outline"
           onClick={() => router.push(`/protected/learn/${courseSlug}/${prevLessonId}`)}
         >
-          Previous Lesson
+          {t.previous}
         </Button>
       )}
       {nextLessonId && (
@@ -78,7 +83,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
           variant="outline"
           onClick={() => router.push(`/protected/learn/${courseSlug}/${nextLessonId}`)}
         >
-          Next Lesson
+          {t.next}
         </Button>
       )}
     </div>

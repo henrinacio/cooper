@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus } from "lucide-react"
 import { Suspense } from "react"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 export const metadata = { title: "My Courses" }
 
@@ -18,6 +20,8 @@ async function CourseList() {
     redirect("/auth/login")
   }
 
+  const locale = await getLocale()
+  const t = translations[locale]
   const userId = data.claims.sub as string
 
   const { data: profile } = await supabase
@@ -39,9 +43,9 @@ async function CourseList() {
   if (!courses?.length) {
     return (
       <div className="text-center py-16 text-muted-foreground">
-        No courses yet.{" "}
+        {t.noCourses}{" "}
         <Link href="/protected/instructor/courses/new" className="underline">
-          Create your first course
+          {t.createFirst}
         </Link>
       </div>
     )
@@ -56,17 +60,17 @@ async function CourseList() {
               <div className="flex items-center gap-2">
                 <span className="font-semibold">{course.title}</span>
                 <Badge variant={course.published ? "default" : "secondary"}>
-                  {course.published ? "Published" : "Draft"}
+                  {course.published ? t.published : t.draft}
                 </Badge>
               </div>
             </div>
             <div className="flex gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href={`/protected/courses/${course.slug}`}>Preview</Link>
+                <Link href={`/protected/courses/${course.slug}`}>{t.preview}</Link>
               </Button>
               <Button asChild size="sm">
                 <Link href={`/protected/instructor/courses/${course.id}`}>
-                  Edit
+                  {t.edit}
                 </Link>
               </Button>
             </div>
@@ -78,21 +82,24 @@ async function CourseList() {
 }
 
 export default async function InstructorCoursesPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">My Courses</h1>
-          <p className="text-muted-foreground mt-1">Manage your courses</p>
+          <h1 className="text-3xl font-bold">{t.title}</h1>
+          <p className="text-muted-foreground mt-1">{t.subtitle}</p>
         </div>
         <Button asChild>
           <Link href="/protected/instructor/courses/new">
             <Plus size={16} />
-            New Course
+            {t.newCourse}
           </Link>
         </Button>
       </div>
-      <Suspense fallback={<div className="text-muted-foreground text-sm">Loading courses…</div>}>
+      <Suspense fallback={<div className="text-muted-foreground text-sm">{t.loading}</div>}>
         <CourseList />
       </Suspense>
     </div>

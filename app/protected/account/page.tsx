@@ -5,6 +5,9 @@ import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Suspense } from "react"
 import { LogoutButton } from "@/components/logout-button"
 import { Spinner } from "@/components/ui/spinner"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { getLocale } from "@/lib/locale"
+import { translations } from "./page.i18n"
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -23,8 +26,11 @@ async function AccountDetails() {
     redirect("/auth/login")
   }
 
+  const locale = await getLocale()
+  const t = translations[locale]
+
   const name = data.user.user_metadata?.full_name ?? data.user.user_metadata?.name ?? "—"
-  const joinedDate = new Date(data.user.created_at).toLocaleDateString("en-US", {
+  const joinedDate = new Date(data.user.created_at).toLocaleDateString(t.dateLocale, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -33,21 +39,24 @@ async function AccountDetails() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Profile</CardTitle>
+        <CardTitle className="text-base">{t.profile}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <Row label="Name" value={name} />
-        <Row label="Email" value={data.user.email ?? "—"} />
-        <Row label="Joined" value={joinedDate} />
+        <Row label={t.name} value={name} />
+        <Row label={t.email} value={data.user.email ?? "—"} />
+        <Row label={t.joined} value={joinedDate} />
       </CardContent>
     </Card>
   )
 }
 
-export default function AccountPage() {
+export default async function AccountPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
+
   return (
     <div className="max-w-xl flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Account</h1>
+      <h1 className="text-2xl font-semibold">{t.title}</h1>
 
       <Suspense fallback={<Spinner />}>
         <AccountDetails />
@@ -55,12 +64,16 @@ export default function AccountPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Preferences</CardTitle>
+          <CardTitle className="text-base">{t.preferences}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Theme</span>
+            <span className="text-sm text-muted-foreground">{t.theme}</span>
             <ThemeSwitcher />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">{t.language}</span>
+            <LanguageSwitcher />
           </div>
         </CardContent>
       </Card>
@@ -69,4 +82,3 @@ export default function AccountPage() {
     </div>
   )
 }
-

@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import { Geist } from "next/font/google"
 import { ThemeProvider } from "next-themes"
+import { Suspense } from "react"
+import { LocaleWrapper } from "./_locale-wrapper"
 import "./globals.css"
 
 const defaultUrl = process.env.VERCEL_URL
@@ -10,7 +12,7 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: { default: "Cooper", template: "%s | Cooper" },
-  description: "Learn anything. At your own pace.",
+  description: "Cooper — Learn anything, at your own pace.",
 }
 
 const geistSans = Geist({
@@ -33,7 +35,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Suspense>
+            <LocaleWrapper>{children}</LocaleWrapper>
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>
