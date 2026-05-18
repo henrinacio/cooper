@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BookOpen, Users, Pencil, PlusCircle } from "lucide-react"
+import { BookOpen, Users, Pencil, PlusCircle, BarChart2 } from "lucide-react"
 import { BackButton } from "@/components/back-button"
 import { PublishToggle } from "./publish-toggle"
 import { AddStudentForm } from "./add-student-form"
@@ -134,14 +134,22 @@ export default async function EditCoursePage({ params }: Props) {
       </div>
 
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <Users size={18} />
-          <h2 className="text-xl font-semibold">
-            {t.students}
-            <span className="ml-2 text-sm font-normal text-muted-foreground">
-              ({enrollments?.length ?? 0})
-            </span>
-          </h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users size={18} />
+            <h2 className="text-xl font-semibold">
+              {t.students}
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({enrollments?.length ?? 0})
+              </span>
+            </h2>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/protected/instructor/courses/${id}/progress`}>
+              <BarChart2 size={14} />
+              {t.viewProgress}
+            </Link>
+          </Button>
         </div>
 
         <AddStudentForm courseId={course.id} />
