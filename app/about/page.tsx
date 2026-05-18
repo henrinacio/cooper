@@ -29,7 +29,7 @@ export default async function AboutPage() {
       <section className="flex flex-col items-center text-center gap-6 px-5 py-24">
         <h1 className="text-5xl font-bold tracking-tight">Cooper</h1>
         <p className="text-muted-foreground text-sm">Version {version}</p>
-        <BackButton />
+        <BackButton href="/" />
       </section>
 
       <section className="flex justify-center px-5 pb-24">

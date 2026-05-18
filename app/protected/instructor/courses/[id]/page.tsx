@@ -55,7 +55,7 @@ export default async function EditCoursePage({ params }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
-        <BackButton />
+        <BackButton href="/protected/instructor/courses" />
       </div>
 
       <div className="flex items-start justify-between">

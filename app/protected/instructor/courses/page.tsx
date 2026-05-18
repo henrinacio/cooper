@@ -54,6 +54,7 @@ async function CourseList() {
   return (
     <div className="flex flex-col gap-3">
       {courses.map((course) => {
+        console.log(course)
         return (
           <Card key={course.id} className="flex items-center justify-between p-4">
             <div className="flex flex-col gap-1">

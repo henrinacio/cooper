@@ -27,7 +27,7 @@ export default async function NewCoursePage() {
 
   return (
     <div className="max-w-xl flex flex-col gap-6">
-      <BackButton />
+      <BackButton href="/protected/instructor/courses" />
 
       <div>
         <h1 className="text-3xl font-bold">{t.title}</h1>

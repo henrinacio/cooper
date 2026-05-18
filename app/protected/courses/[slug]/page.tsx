@@ -52,13 +52,15 @@ export default async function CourseDetailPage({ params }: Props) {
     .order("order", { referencedTable: "modules.lessons" })
     .single<CourseWithModules>()
 
-  if (!course) notFound()
+  if (!course) {
+    notFound()
+  }
 
   const locale = await getLocale()
   const t = translations[locale]
 
   const totalLessons = course.modules.reduce(
-    (acc, m) => acc + m.lessons.length,
+    (acc, module) => acc + module.lessons.length,
     0,
   )
 
@@ -68,7 +70,7 @@ export default async function CourseDetailPage({ params }: Props) {
 
   return (
     <div className="flex flex-col gap-8">
-      <BackButton />
+      <BackButton href={isPrivileged ? '/protected/instructor/courses' : '/protected/dashboard'} />
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -106,15 +108,15 @@ export default async function CourseDetailPage({ params }: Props) {
 
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold">{t.curriculum}</h2>
-        {course.modules.map((mod) => (
-          <Card key={mod.id}>
+        {course.modules.map((module) => (
+          <Card key={module.id}>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold">
-                {mod.title}
+                {module.title}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-1">
-              {mod.lessons.map((lesson) => (
+              {module.lessons.map((lesson) => (
                 <Link
                   key={lesson.id}
                   href={`/protected/learn/${course.slug}/${lesson.id}`}
