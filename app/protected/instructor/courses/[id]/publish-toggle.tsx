@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./publish-toggle.i18n"
+import { Spinner } from "@/components/ui/spinner"
 
 export function PublishToggle({ courseId, published }: { courseId: string; published: boolean }) {
   const [state, setState] = useState(published)
@@ -31,7 +32,7 @@ export function PublishToggle({ courseId, published }: { courseId: string; publi
 
   return (
     <Button variant={state ? "secondary" : "default"} size="sm" onClick={toggle} disabled={loading}>
-      {loading ? "…" : state ? t.unpublish : t.publish}
+      {loading ? <Spinner /> : state ? t.unpublish : t.publish}
     </Button>
   )
 }
