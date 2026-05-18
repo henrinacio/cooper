@@ -39,6 +39,32 @@ export async function createModule(
   return {}
 }
 
+export async function renameModule(
+  courseId: string,
+  moduleId: string,
+  title: string,
+): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    return { error: "Not authenticated" }
+  }
+
+  const { error } = await supabase
+    .from("modules")
+    .update({ title })
+    .eq("id", moduleId)
+    .eq("course_id", courseId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath(`/protected/instructor/courses/${courseId}`)
+  return {}
+}
+
 export async function deleteModule(
   courseId: string,
   moduleId: string,

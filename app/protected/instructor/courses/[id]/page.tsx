@@ -13,6 +13,7 @@ import { RemoveStudentButton } from "./remove-student-button"
 import { AddModuleForm } from "./add-module-form"
 import { DeleteModuleButton } from "./delete-module-button"
 import { DeleteLessonButton } from "./delete-lesson-button"
+import { RenameModuleButton } from "./rename-module-button"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 
@@ -85,9 +86,9 @@ export default async function EditCoursePage({ params }: Props) {
           course.modules.map((module) => (
             <Card key={module.id}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-semibold flex items-center justify-between">
-                  <span>{module.title}</span>
-                  <div className="flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold flex items-center justify-between group/module">
+                  <RenameModuleButton courseId={course.id} moduleId={module.id} currentTitle={module.title} />
+                  <div className="flex items-center gap-2 shrink-0">
                     <Badge variant="outline" className="text-xs">
                       {module.lessons.length} {t.lessonsLabel}
                     </Badge>
@@ -108,15 +109,12 @@ export default async function EditCoursePage({ params }: Props) {
                     </Badge>
                     <Link
                       href={`/protected/instructor/courses/${course.id}/lessons/${lesson.id}`}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                         <Pencil size={12} />
                       </Button>
                     </Link>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      <DeleteLessonButton courseId={course.id} lessonId={lesson.id} />
-                    </div>
+                    <DeleteLessonButton courseId={course.id} lessonId={lesson.id} />
                   </div>
                 ))}
 
