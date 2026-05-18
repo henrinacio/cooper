@@ -8,6 +8,7 @@ import { Plus } from "lucide-react"
 import { Suspense } from "react"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
+import { Spinner } from "@/components/ui/spinner"
 
 export const metadata = { title: "My Courses" }
 
@@ -54,26 +55,28 @@ async function CourseList() {
   return (
     <div className="flex flex-col gap-3">
       {courses.map((course) => {
-        console.log(course)
         return (
-          <Card key={course.id} className="flex items-center justify-between p-4">
+          <Card key={course.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-3">
             <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">{course.title}</span>
-                <Badge variant={course.published ? "default" : "secondary"}>
-                  {course.published ? t.published : t.draft}
-                </Badge>
-              </div>
+              <Badge variant={course.published ? "default" : "secondary"} className="self-start sm:hidden">
+                {course.published ? t.published : t.draft}
+              </Badge>
+              <span className="font-semibold">{course.title}</span>
             </div>
-            <div className="flex gap-2">
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/protected/courses/${course.slug}`}>{t.preview}</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href={`/protected/instructor/courses/${course.id}`}>
-                  {t.edit}
-                </Link>
-              </Button>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <Badge variant={course.published ? "default" : "secondary"} className="hidden sm:inline-flex">
+                {course.published ? t.published : t.draft}
+              </Badge>
+              <div className="flex gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link href={`/protected/courses/${course.slug}`}>{t.preview}</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={`/protected/instructor/courses/${course.id}`}>
+                    {t.edit}
+                  </Link>
+                </Button>
+              </div>
             </div>
           </Card>
         )
@@ -100,7 +103,7 @@ export default async function InstructorCoursesPage() {
           </Link>
         </Button>
       </div>
-      <Suspense fallback={<div className="text-muted-foreground text-sm">{t.loading}</div>}>
+      <Suspense fallback={<Spinner />}>
         <CourseList />
       </Suspense>
     </div>
