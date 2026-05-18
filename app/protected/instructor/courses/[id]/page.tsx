@@ -79,21 +79,21 @@ export default async function EditCoursePage({ params }: Props) {
         {!course.modules.length ? (
           <p className="text-muted-foreground text-sm">No modules yet. Add one above.</p>
         ) : (
-          course.modules.map((mod) => (
-            <Card key={mod.id}>
+          course.modules.map((module) => (
+            <Card key={module.id}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold flex items-center justify-between">
-                  <span>{mod.title}</span>
+                  <span>{module.title}</span>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">
-                      {mod.lessons.length} lessons
+                      {module.lessons.length} lessons
                     </Badge>
-                    <DeleteModuleButton courseId={course.id} moduleId={mod.id} />
+                    <DeleteModuleButton courseId={course.id} moduleId={module.id} />
                   </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-1">
-                {mod.lessons.map((lesson) => (
+                {module.lessons.map((lesson) => (
                   <div
                     key={lesson.id}
                     className="flex items-center gap-2 text-sm py-1 px-2 rounded hover:bg-accent group"
@@ -118,7 +118,7 @@ export default async function EditCoursePage({ params }: Props) {
                 ))}
 
                 <Link
-                  href={`/protected/instructor/courses/${course.id}/lessons/new?moduleId=${mod.id}`}
+                  href={`/protected/instructor/courses/${course.id}/lessons/new?moduleId=${module.id}`}
                   className="mt-1"
                 >
                   <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground">

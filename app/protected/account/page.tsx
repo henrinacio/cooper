@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Suspense } from "react"
 import { LogoutButton } from "@/components/logout-button"
+import { Spinner } from "@/components/ui/spinner"
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -48,7 +49,7 @@ export default function AccountPage() {
     <div className="max-w-xl flex flex-col gap-6">
       <h1 className="text-2xl font-semibold">Account</h1>
 
-      <Suspense>
+      <Suspense fallback={<Spinner />}>
         <AccountDetails />
       </Suspense>
 

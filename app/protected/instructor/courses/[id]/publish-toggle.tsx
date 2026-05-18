@@ -13,7 +13,12 @@ export function PublishToggle({ courseId, published }: { courseId: string; publi
   async function toggle() {
     setLoading(true)
     const supabase = createClient()
-    await supabase.from("courses").update({ published: !state }).eq("id", courseId)
+
+    await supabase
+      .from("courses")
+      .update({ published: !state })
+      .eq("id", courseId)
+
     setState(!state)
     setLoading(false)
     router.refresh()
