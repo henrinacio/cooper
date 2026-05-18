@@ -57,7 +57,7 @@ export function RenameModuleButton({ courseId, moduleId, currentTitle }: Props) 
           disabled={loading}
           className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground shrink-0"
         >
-          <Check size={13} />
+          <Check size={16} />
         </Button>
         <Button
           variant="ghost"
@@ -66,7 +66,7 @@ export function RenameModuleButton({ courseId, moduleId, currentTitle }: Props) 
           disabled={loading}
           className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground shrink-0"
         >
-          <X size={13} />
+          <X size={16} />
         </Button>
       </div>
     )
@@ -81,7 +81,7 @@ export function RenameModuleButton({ courseId, moduleId, currentTitle }: Props) 
         onClick={startEdit}
         className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground shrink-0"
       >
-        <Pencil size={12} />
+        <Pencil size={16} />
       </Button>
     </div>
   )

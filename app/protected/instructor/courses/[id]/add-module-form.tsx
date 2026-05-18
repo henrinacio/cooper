@@ -36,7 +36,7 @@ export function AddModuleForm({ courseId }: { courseId: string }) {
   if (!open) {
     return (
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        <PlusCircle size={14} />
+        <PlusCircle size={16} />
         {t.addModule}
       </Button>
     )
@@ -61,7 +61,7 @@ export function AddModuleForm({ courseId }: { courseId: string }) {
         {loading ? t.adding : t.add}
       </Button>
       <Button type="button" variant="ghost" size="sm" onClick={handleClose}>
-        <X size={14} />
+        <X size={16} />
       </Button>
       {error && <p className="text-sm text-destructive">{error}</p>}
     </form>

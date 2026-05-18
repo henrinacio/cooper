@@ -109,9 +109,9 @@ export default async function LessonPage({ params }: Props) {
                   )}
                 >
                   {isDone ? (
-                    <CheckCircle size={13} className="shrink-0 text-green-500" />
+                    <CheckCircle size={16} className="shrink-0 text-green-500" />
                   ) : (
-                    <BookOpen size={13} className="shrink-0" />
+                    <BookOpen size={16} className="shrink-0" />
                   )}
                   <span className="line-clamp-1">{l.title}</span>
                 </Link>
@@ -124,7 +124,7 @@ export default async function LessonPage({ params }: Props) {
       <div className="flex-1 flex flex-col gap-6">
         <Button asChild variant="ghost" size="sm" className="w-fit">
           <Link href={`/protected/courses/${courseSlug}`}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={16} />
             {t.backToCourse}
           </Link>
         </Button>

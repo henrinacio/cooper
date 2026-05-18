@@ -42,7 +42,7 @@ export default async function EditLessonPage({ params }: Props) {
       <div className="flex items-center gap-3">
         <Button asChild variant="ghost" size="sm">
           <Link href={`/protected/instructor/courses/${id}`}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={16} />
             {t.back}
           </Link>
         </Button>

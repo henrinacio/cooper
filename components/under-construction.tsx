@@ -17,7 +17,7 @@ export function UnderConstruction({
         className,
       )}
     >
-      <HardHat size={18} className="mt-0.5 shrink-0" />
+      <HardHat size={16} className="mt-0.5 shrink-0" />
       <p className="text-sm">{message}</p>
     </div>
   )

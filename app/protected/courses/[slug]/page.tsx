@@ -91,7 +91,7 @@ export default async function CourseDetailPage({ params }: Props) {
           )}
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
-              <BookOpen size={14} />
+              <BookOpen size={16} />
               {totalLessons} {t.lessonsCount}
             </span>
             <span>
@@ -128,7 +128,7 @@ export default async function CourseDetailPage({ params }: Props) {
                   className="flex items-center justify-between text-sm py-1 px-2 rounded hover:bg-accent"
                 >
                   <span className="flex items-center gap-2">
-                    <BookOpen size={13} className="text-muted-foreground" />
+                    <BookOpen size={16} className="text-muted-foreground" />
                     {lesson.title}
                   </span>
                   <div className="flex items-center gap-2 text-muted-foreground">
@@ -137,7 +137,7 @@ export default async function CourseDetailPage({ params }: Props) {
                     </Badge>
                     {lesson.duration_s && (
                       <span className="flex items-center gap-1">
-                        <Clock size={12} />
+                        <Clock size={16} />
                         {Math.ceil(lesson.duration_s / 60)}m
                       </span>
                     )}

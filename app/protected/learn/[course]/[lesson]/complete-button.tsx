@@ -66,7 +66,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
           disabled={loading}
           className="flex items-center gap-1 text-muted-foreground"
         >
-          <Undo2 size={14} />
+          <Undo2 size={16} />
           {t.undo}
         </Button>
       )}

@@ -57,7 +57,7 @@ async function CourseList() {
     .select("lesson_id")
     .eq("user_id", userId)
 
-  const completedIds = new Set(progressRows?.map((p) => p.lesson_id) ?? [])
+  const completedIds = new Set(progressRows?.map((progressRow) => progressRow.lesson_id) ?? [])
 
   if (!enrollments?.length) {
     return (
@@ -78,7 +78,7 @@ async function CourseList() {
         if (!course) return null
 
         const allLessons: string[] = course.modules?.flatMap(
-          (m) => m.lessons?.map((l) => l.id) ?? [],
+          (module) => module.lessons?.map((lesson) => lesson.id) ?? [],
         ) ?? []
         const completed = allLessons.filter((id) => completedIds.has(id)).length
         const total = allLessons.length

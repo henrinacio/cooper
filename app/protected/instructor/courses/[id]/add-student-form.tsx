@@ -50,7 +50,7 @@ export function AddStudentForm({ courseId }: { courseId: string }) {
           className="max-w-sm"
         />
         <Button type="submit" disabled={loading} size="sm">
-          <UserPlus size={14} />
+          <UserPlus size={16} />
           {loading ? t.adding : t.add}
         </Button>
       </div>

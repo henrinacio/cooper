@@ -149,12 +149,12 @@ export default async function CourseProgressPage({ params }: Props) {
                             >
                               {completedIds.has(lesson.id) ? (
                                 <CheckCircle2
-                                  size={13}
+                                  size={16}
                                   className="text-green-500 shrink-0"
                                 />
                               ) : (
                                 <Circle
-                                  size={13}
+                                  size={16}
                                   className="text-muted-foreground/40 shrink-0"
                                 />
                               )}

@@ -102,7 +102,7 @@ export function EditCourseHeader({ courseId, title, description }: Props) {
         onClick={startEdit}
         className="h-7 w-7 p-0 mt-1 text-muted-foreground hover:text-foreground shrink-0"
       >
-        <Pencil size={14} />
+        <Pencil size={16} />
       </Button>
     </div>
   )

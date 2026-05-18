@@ -15,7 +15,7 @@ export async function BackButton({ href }: Props) {
   return (
     <Button variant="ghost" size="sm" className="w-fit" asChild>
       <Link href={href}>
-        <ArrowLeft size={14} />
+        <ArrowLeft size={16} />
         {t.back}
       </Link>
     </Button>

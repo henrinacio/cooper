@@ -57,7 +57,7 @@ async function CourseList() {
       {courses.map((course) => {
         return (
           <Card key={course.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Badge variant={course.published ? "default" : "secondary"} className="self-start sm:hidden">
                 {course.published ? t.published : t.draft}
               </Badge>
