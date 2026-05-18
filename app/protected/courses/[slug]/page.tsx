@@ -68,6 +68,8 @@ export default async function CourseDetailPage({ params }: Props) {
 
   const isPrivileged = profile ? ['instructor', 'admin'].includes(profile.role) : false
 
+  console.log(course)
+
   return (
     <div className="flex flex-col gap-8">
       <BackButton href={isPrivileged ? '/protected/instructor/courses' : '/protected/dashboard'} />
@@ -76,8 +78,8 @@ export default async function CourseDetailPage({ params }: Props) {
         <div className="flex flex-col gap-2">
           <div className="flex flex-row gap-2 items-center">
             <h1 className="text-3xl font-bold">{course.title}</h1>
-            {profile && isPrivileged && (
-              <div>
+            {isPrivileged && (
+              <div className="flex text-center">
                 <Badge variant="outline" className="text-xs">
                   {t.previewMode}
                 </Badge>
@@ -91,6 +93,9 @@ export default async function CourseDetailPage({ params }: Props) {
             <span className="flex items-center gap-1">
               <BookOpen size={14} />
               {totalLessons} {t.lessonsCount}
+            </span>
+            <span>
+              {t.lastUpdated} {new Date(course.updated_at).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })}
             </span>
           </div>
         </div>
