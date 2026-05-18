@@ -57,6 +57,31 @@ export interface Progress {
   completed_at: string;
 }
 
+export interface ScheduledSession {
+  id: string;
+  course_id: string;
+  instructor_id: string;
+  student_id: string;
+  title: string;
+  scheduled_at: string;
+  duration_min: number;
+  notes: string | null;
+  created_at: string;
+}
+
+export type ScheduledSessionWithDetails = ScheduledSession & {
+  courses: { title: string } | null;
+  student: { full_name: string | null } | null;
+  instructor: { full_name: string | null } | null;
+};
+
+export type CourseWithStudents = Pick<Course, "id" | "title"> & {
+  enrollments: Array<{
+    user_id: string;
+    profiles: { id: string; full_name: string | null } | null;
+  }>;
+};
+
 // Joined types used across pages
 export type CourseWithInstructor = Course & {
   profiles: Pick<Profile, "id" | "full_name" | "avatar_url">;

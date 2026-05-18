@@ -1,8 +1,16 @@
-import { Home, Bell, User } from "lucide-react"
+import { Home, User, CalendarDays } from "lucide-react"
 
-type NavLabels = { home: string; notifications: string; account: string }
+type NavLabels = {
+  home: string;
+  account: string;
+  calendar: string
+}
 
-const DEFAULT_LABELS: NavLabels = { home: "Home", notifications: "Notifications", account: "My Account" }
+const DEFAULT_LABELS: NavLabels = {
+  home: "Home",
+  account: "My Account",
+  calendar: "Calendar"
+}
 
 export function getNavItems(role: string | null, labels: NavLabels = DEFAULT_LABELS) {
   const homeHref =
@@ -11,8 +19,20 @@ export function getNavItems(role: string | null, labels: NavLabels = DEFAULT_LAB
       : "/protected/dashboard"
 
   return [
-    { href: homeHref, label: labels.home, icon: Home },
-    { href: "/protected/notifications", label: labels.notifications, icon: Bell },
-    { href: "/protected/account", label: labels.account, icon: User },
+    {
+      href: homeHref,
+      label: labels.home,
+      icon: Home
+    },
+    {
+      href: "/protected/calendar",
+      label: labels.calendar,
+      icon: CalendarDays
+    },
+    {
+      href: "/protected/account",
+      label: labels.account,
+      icon: User
+    },
   ]
 }

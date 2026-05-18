@@ -173,6 +173,64 @@ export type Database = {
           },
         ]
       }
+      scheduled_sessions: {
+        Row: {
+          id: string
+          course_id: string
+          instructor_id: string
+          student_id: string
+          title: string
+          scheduled_at: string
+          duration_min: number
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          course_id: string
+          instructor_id: string
+          student_id: string
+          title: string
+          scheduled_at: string
+          duration_min?: number
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          course_id?: string
+          instructor_id?: string
+          student_id?: string
+          title?: string
+          scheduled_at?: string
+          duration_min?: number
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_sessions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_sessions_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
