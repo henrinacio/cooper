@@ -15,8 +15,8 @@ import { Globe } from "lucide-react"
 
 const LOCALES: { code: Locale; label: string }[] = [
   { code: "en", label: "English" },
-  { code: "pt", label: "Português" },
   { code: "es", label: "Español" },
+  { code: "pt", label: "Português" },
 ]
 
 export function LanguageSwitcher() {
@@ -34,7 +34,7 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-1.5">
-          <Globe size={15} />
+          <Globe size={16} />
           <span className="text-xs">{current?.label}</span>
         </Button>
       </DropdownMenuTrigger>
