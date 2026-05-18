@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Plus, Clock, BookOpen, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScheduleSessionDialog } from "./schedule-session-dialog"
@@ -60,7 +60,7 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
       <div className="flex flex-col gap-1 flex-1 min-w-0">
         <span className="font-medium text-sm truncate">{session.title}</span>
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1" suppressHydrationWarning>
             <Clock size={16} />
             {time} · {session.duration_min}min
           </span>
@@ -104,13 +104,18 @@ interface Props {
 }
 
 export function CalendarView({ sessions, role, courses, t, dialogT }: Props) {
-  const today = new Date()
-  const todayString = toLocalDateStr(today.toISOString())
-
-  const [year, setYear] = useState(today.getFullYear())
-  const [month, setMonth] = useState(today.getMonth())
-  const [selectedDate, setSelectedDate] = useState<string | null>(todayString)
+  const [todayString, setTodayString] = useState("")
+  const [year, setYear] = useState(() => new Date().getFullYear())
+  const [month, setMonth] = useState(() => new Date().getMonth())
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  useEffect(() => {
+    const today = new Date()
+    const ts = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
+    setTodayString(ts)
+    setSelectedDate(ts)
+  }, [])
 
   const days = buildDays(year, month)
 
@@ -218,7 +223,7 @@ export function CalendarView({ sessions, role, courses, t, dialogT }: Props) {
 
       {selectedDate && (
         <div className="flex flex-col gap-3">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide" suppressHydrationWarning>
             {new Date(selectedDate + "T12:00").toLocaleDateString(undefined, {
               weekday: "long",
               month: "long",
