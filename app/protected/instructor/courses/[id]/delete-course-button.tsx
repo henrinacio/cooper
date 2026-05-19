@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -14,6 +15,7 @@ import { deleteCourse } from "./actions"
 import { Trash2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./delete-course-button.i18n"
+import { toast } from "sonner"
 
 interface Props {
   courseId: string;
@@ -23,12 +25,21 @@ export function DeleteCourseButton({ courseId }: Props) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const router = useRouter()
   const locale = useLocale()
   const t = translations[locale]
 
   async function remove() {
     setLoading(true)
-    await deleteCourse(courseId)
+    const result = await deleteCourse(courseId)
+    setLoading(false)
+
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(t.deletedSuccess)
+      router.push("/protected/instructor/courses")
+    }
   }
 
   return (

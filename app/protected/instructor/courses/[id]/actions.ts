@@ -2,7 +2,6 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 import { LessonType } from "@/lib/supabase/types"
 
 // ---- course -----------------------------------------------------------------
@@ -25,7 +24,8 @@ export async function deleteCourse(courseId: string): Promise<{ error?: string }
     return { error: error.message }
   }
 
-  redirect("/protected/instructor/courses")
+  revalidatePath("/protected/instructor/courses")
+  return {}
 }
 
 export async function updateCourse(

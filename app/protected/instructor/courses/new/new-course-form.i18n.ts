@@ -8,6 +8,8 @@ export const translations: Record<Locale, {
   publishImmediately: string
   creating: string
   createCourse: string
+  successTitle: string
+  errorTitle: string
 }> = {
   en: {
     titleLabel: "Title",
@@ -17,6 +19,8 @@ export const translations: Record<Locale, {
     publishImmediately: "Publish immediately",
     creating: "Creating…",
     createCourse: "Create Course",
+    successTitle: "Course created",
+    errorTitle: "Failed to create course",
   },
   pt: {
     titleLabel: "Título",
@@ -26,6 +30,8 @@ export const translations: Record<Locale, {
     publishImmediately: "Publicar imediatamente",
     creating: "Criando…",
     createCourse: "Criar Curso",
+    successTitle: "Curso criado",
+    errorTitle: "Erro ao criar curso",
   },
   es: {
     titleLabel: "Título",
@@ -35,5 +41,7 @@ export const translations: Record<Locale, {
     publishImmediately: "Publicar inmediatamente",
     creating: "Creando…",
     createCourse: "Crear Curso",
+    successTitle: "Curso creado",
+    errorTitle: "Error al crear curso",
   },
 }

@@ -38,7 +38,7 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
     return words > 0 ? Math.ceil(words / 200) * 60 : null
   }
 
-  async function submit(e: React.SyntheticEvent<HTMLFormElement>) {
+  async function submit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
 
