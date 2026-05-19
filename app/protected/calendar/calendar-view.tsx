@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Plus, Clock, BookOpen, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScheduleSessionDialog } from "./schedule-session-dialog"
-import { deleteSession } from "./actions"
+import { deleteSession, confirmSession } from "./actions"
 import { cn } from "@/lib/utils"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"
 import type { translations as pageTranslations } from "./page.i18n"
@@ -40,6 +40,8 @@ interface SessionCardProps {
 
 function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
   const [deleting, setDeleting] = useState(false)
+  const [confirmed, setConfirmed] = useState(session.confirmed)
+  const [confirming, setConfirming] = useState(false)
 
   const time = new Date(session.scheduled_at).toLocaleTimeString(undefined, {
     hour: "2-digit",
@@ -53,6 +55,15 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
   async function handleDelete() {
     setDeleting(true)
     await deleteSession(session.id)
+  }
+
+  async function handleConfirm() {
+    setConfirming(true)
+    const result = await confirmSession(session.id)
+    if (!result.error) {
+      setConfirmed(true)
+    }
+    setConfirming(false)
   }
 
   return (
@@ -78,6 +89,21 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
         )}
         {session.notes && (
           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{session.notes}</p>
+        )}
+        {!isPrivileged && (
+          confirmed ? (
+            <span className="text-xs text-muted-foreground mt-1">{t.confirmed}</span>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-1.5 h-7 text-xs self-start"
+              onClick={handleConfirm}
+              disabled={confirming}
+            >
+              {t.confirmClass}
+            </Button>
+          )
         )}
       </div>
       {isPrivileged && (

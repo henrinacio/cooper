@@ -27,7 +27,7 @@ export default async function CalendarPage() {
   const { data: sessions } = await supabase
     .from("scheduled_sessions")
     .select(
-      "id, title, scheduled_at, duration_min, notes, course_id, student_id, instructor_id, courses(title), student:profiles!student_id(full_name), instructor:profiles!instructor_id(full_name)"
+      "id, title, scheduled_at, duration_min, notes, confirmed, course_id, student_id, instructor_id, courses(title), student:profiles!student_id(full_name), instructor:profiles!instructor_id(full_name)"
     )
     .order("scheduled_at")
 

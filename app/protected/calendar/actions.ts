@@ -21,7 +21,7 @@ export async function scheduleSession(input: ScheduleSessionInput): Promise<{ er
     return { error: "Not authenticated" }
   }
 
-  const { error } = await supabase
+  const { data: sessionData, error } = await supabase
     .from("scheduled_sessions")
     .insert({
       course_id: input.courseId,
@@ -32,6 +32,8 @@ export async function scheduleSession(input: ScheduleSessionInput): Promise<{ er
       duration_min: input.durationMin,
       notes: input.notes,
     })
+    .select("id")
+    .single()
 
   if (error) {
     return { error: error.message }
@@ -42,6 +44,7 @@ export async function scheduleSession(input: ScheduleSessionInput): Promise<{ er
     actorId: data.claims.sub as string,
     type: "class_scheduled",
     metadata: {
+      sessionId: sessionData.id,
       sessionTitle: input.title,
       courseId: input.courseId,
       scheduledAt: input.scheduledAt,
@@ -49,6 +52,60 @@ export async function scheduleSession(input: ScheduleSessionInput): Promise<{ er
     },
   })
 
+  revalidatePath("/protected/calendar")
+  return {}
+}
+
+export async function confirmSession(sessionId: string): Promise<{ error?: string }> {
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    return { error: "Not authenticated" }
+  }
+
+  const studentId = data.claims.sub as string
+
+  const { data: session, error: fetchError } = await supabase
+    .from("scheduled_sessions")
+    .select("instructor_id, title, scheduled_at, course_id")
+    .eq("id", sessionId)
+    .eq("student_id", studentId)
+    .single()
+
+  if (fetchError || !session) {
+    return { error: "Session not found" }
+  }
+
+  const { error: updateError } = await supabase
+    .from("scheduled_sessions")
+    .update({ confirmed: true })
+    .eq("id", sessionId)
+    .eq("student_id", studentId)
+
+  if (updateError) {
+    return { error: updateError.message }
+  }
+
+  await supabase
+    .from("notifications")
+    .update({ metadata: { sessionId, confirmed: true } as never })
+    .eq("user_id", studentId)
+    .filter("metadata", "@>", JSON.stringify({ sessionId }))
+
+  await createNotification({
+    userId: session.instructor_id,
+    actorId: studentId,
+    type: "class_confirmed",
+    metadata: {
+      sessionId,
+      sessionTitle: session.title,
+      courseId: session.course_id,
+      scheduledAt: session.scheduled_at,
+    },
+  })
+
+  revalidatePath("/protected/notifications")
   revalidatePath("/protected/calendar")
   return {}
 }

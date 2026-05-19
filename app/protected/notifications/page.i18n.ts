@@ -6,6 +6,8 @@ export const translations: Record<Locale, {
   clearHistory: string;
   empty: string;
   classScheduled: string;
+  classConfirmed: string;
+  confirmClass: string;
   courseEnrolled: string;
   courseCompleted: string;
   unknown: string;
@@ -16,6 +18,8 @@ export const translations: Record<Locale, {
     clearHistory: "Clear history",
     empty: "No notifications yet.",
     classScheduled: "A class was scheduled for you",
+    classConfirmed: "A student confirmed a class",
+    confirmClass: "Confirm",
     courseEnrolled: "You were enrolled in a course",
     courseCompleted: "A student completed your course",
     unknown: "New notification",
@@ -26,6 +30,8 @@ export const translations: Record<Locale, {
     clearHistory: "Limpar histórico",
     empty: "Nenhuma notificação ainda.",
     classScheduled: "Uma aula foi agendada para você",
+    classConfirmed: "Um aluno confirmou uma aula",
+    confirmClass: "Confirmar",
     courseEnrolled: "Você foi matriculado em um curso",
     courseCompleted: "Um aluno concluiu seu curso",
     unknown: "Nova notificação",
@@ -36,6 +42,8 @@ export const translations: Record<Locale, {
     clearHistory: "Borrar historial",
     empty: "Aún no hay notificaciones.",
     classScheduled: "Se programó una clase para ti",
+    classConfirmed: "Un estudiante confirmó una clase",
+    confirmClass: "Confirmar",
     courseEnrolled: "Te inscribieron en un curso",
     courseCompleted: "Un estudiante completó tu curso",
     unknown: "Nueva notificación",

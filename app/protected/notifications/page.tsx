@@ -1,6 +1,7 @@
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 import { getNotifications, markAllAsRead, markAsRead, deleteAllNotifications } from "@/lib/notifications/actions"
+import { confirmSession } from "@/app/protected/calendar/actions"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -20,8 +21,9 @@ function formatMetadata(type: string, metadata: Record<string, unknown>, typeLab
 
   if (type === "course_enrolled" || type === "course_completed") {
     const title = metadata.courseTitle as string | undefined
+    const studentName = actorName ? ` · ${actorName}` : ""
     if (title) {
-      return `"${title}"`
+      return `"${title}" ${studentName}`
     }
   }
 
@@ -35,6 +37,7 @@ export default async function NotificationsPage() {
 
   const typeLabels: Record<string, string> = {
     class_scheduled: t.classScheduled,
+    class_confirmed: t.classConfirmed,
     course_enrolled: t.courseEnrolled,
     course_completed: t.courseCompleted,
     unknown: t.unknown,
@@ -104,6 +107,18 @@ export default async function NotificationsPage() {
                   <p className="text-xs text-muted-foreground">
                     {new Date(notification.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
                   </p>
+                  {notification.type === "class_scheduled" && !metadata.confirmed && !!metadata.sessionId && (
+                    <form
+                      action={async () => {
+                        "use server"
+                        await confirmSession(metadata.sessionId as string)
+                      }}
+                    >
+                      <Button type="submit" size="sm" variant="outline" className="mt-1.5 h-7 text-xs">
+                        {t.confirmClass}
+                      </Button>
+                    </form>
+                  )}
                 </div>
                 {!notification.read && (
                   <form
