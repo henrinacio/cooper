@@ -22,6 +22,7 @@ export const translations: Record<
     dur60: string
     dur90: string
     dur120: string
+    scheduledSuccess: string
   }
 > = {
   en: {
@@ -39,6 +40,7 @@ export const translations: Record<
     notesLabel: "Notes (optional)",
     notesPlaceholder: "Any notes for this session...",
     scheduleButton: "Schedule",
+    scheduledSuccess: "Class scheduled!",
     dur30: "30 minutes",
     dur45: "45 minutes",
     dur60: "1 hour",
@@ -60,6 +62,7 @@ export const translations: Record<
     notesLabel: "Notas (opcional)",
     notesPlaceholder: "Alguma nota para esta sessão...",
     scheduleButton: "Agendar",
+    scheduledSuccess: "Aula agendada!",
     dur30: "30 minutos",
     dur45: "45 minutos",
     dur60: "1 hora",
@@ -81,6 +84,7 @@ export const translations: Record<
     notesLabel: "Notas (opcional)",
     notesPlaceholder: "Alguna nota para esta sesión...",
     scheduleButton: "Programar",
+    scheduledSuccess: "¡Clase programada!",
     dur30: "30 minutos",
     dur45: "45 minutos",
     dur60: "1 hora",

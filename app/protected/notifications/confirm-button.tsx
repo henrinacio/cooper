@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { confirmSession } from "@/app/protected/calendar/actions"
+import { toast } from "sonner"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./confirm-button.i18n"
 
 interface ConfirmButtonProps {
   sessionId: string
@@ -14,11 +17,17 @@ export function ConfirmButton({ sessionId, labelConfirm, labelConfirmed }: Confi
   const [confirmed, setConfirmed] = useState(false)
   const [confirming, setConfirming] = useState(false)
 
+  const locale = useLocale()
+  const t = translations[locale]
+
   async function handleConfirm() {
     setConfirming(true)
     const result = await confirmSession(sessionId)
-    if (!result.error) {
+    if (result.error) {
+      toast.error(result.error)
+    } else {
       setConfirmed(true)
+      toast.success(t.success)
     }
     setConfirming(false)
   }

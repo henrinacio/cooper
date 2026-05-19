@@ -7,6 +7,7 @@ import { CheckCircle, Undo2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./complete-button.i18n"
 import { markLessonComplete, markLessonIncomplete } from "./actions"
+import { toast } from "sonner"
 
 interface Props {
   lessonId: string;
@@ -33,6 +34,7 @@ export function CompleteButton({ lessonId, courseId, instructorId, nextLessonId,
     await markLessonComplete(lessonId, courseId, instructorId)
     setDone(true)
     setLoading(false)
+    toast.success(t.markedComplete)
     router.refresh()
   }
 
@@ -41,6 +43,7 @@ export function CompleteButton({ lessonId, courseId, instructorId, nextLessonId,
     await markLessonIncomplete(lessonId)
     setDone(false)
     setLoading(false)
+    toast.success(t.markedIncomplete)
     router.refresh()
   }
 

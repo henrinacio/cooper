@@ -3,9 +3,18 @@
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Plus, Clock, BookOpen, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { ScheduleSessionDialog } from "./schedule-session-dialog"
 import { deleteSession, confirmSession } from "./actions"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"
 import type { translations as pageTranslations } from "./page.i18n"
 import type { translations as dialogTranslations } from "./schedule-session-dialog.i18n"
@@ -40,6 +49,7 @@ interface SessionCardProps {
 
 function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
   const [deleting, setDeleting] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [confirmed, setConfirmed] = useState(session.confirmed)
   const [confirming, setConfirming] = useState(false)
 
@@ -54,7 +64,14 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
 
   async function handleDelete() {
     setDeleting(true)
-    await deleteSession(session.id)
+    const result = await deleteSession(session.id)
+    if (result.error) {
+      toast.error(t.deleteError)
+      setDeleting(false)
+      setDeleteDialogOpen(false)
+    } else {
+      toast.success(t.deleteSuccess)
+    }
   }
 
   async function handleConfirm() {
@@ -107,15 +124,34 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
         )}
       </div>
       {isPrivileged && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 w-7 p-0 shrink-0"
-          onClick={handleDelete}
-          disabled={deleting}
-        >
-          <Trash2 size={16} className="text-destructive" />
-        </Button>
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0 shrink-0"
+            onClick={() => setDeleteDialogOpen(true)}
+            disabled={deleting}
+          >
+            <Trash2 size={16} className="text-destructive" />
+          </Button>
+
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t.deleteConfirmTitle}</DialogTitle>
+                <DialogDescription>{t.deleteConfirmDescription}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
+                  {t.deleteCancel}
+                </Button>
+                <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+                  {deleting ? "…" : t.deleteConfirm}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </div>
   )

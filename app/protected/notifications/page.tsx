@@ -36,6 +36,16 @@ function formatMetadata(type: string, metadata: Record<string, unknown>, typeLab
     }
   }
 
+  if (type === "class_cancelled") {
+    const title = metadata.sessionTitle as string | undefined
+    const at = metadata.scheduledAt as string | undefined
+    if (title && at) {
+      const date = new Date(at).toLocaleDateString(bcp47, { dateStyle: "medium" })
+      const instructorSuffix = actorName ? ` · ${actorName}` : ""
+      return `"${title}" — ${date}${instructorSuffix}`
+    }
+  }
+
   if (type === "course_enrolled" || type === "course_completed") {
     const title = metadata.courseTitle as string | undefined
     const studentName = actorName ? ` · ${actorName}` : ""
@@ -58,6 +68,7 @@ export default async function NotificationsPage() {
   const typeLabels: Record<string, string> = {
     class_scheduled: t.classScheduled,
     class_confirmed: t.classConfirmed,
+    class_cancelled: t.classCancelled,
     course_enrolled: t.courseEnrolled,
     course_completed: t.courseCompleted,
     unknown: t.unknown,

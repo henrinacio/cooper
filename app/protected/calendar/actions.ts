@@ -130,16 +130,42 @@ export async function deleteSession(sessionId: string): Promise<{ error?: string
     return { error: "Not authenticated" }
   }
 
+  const instructorId = data.claims.sub as string
+
+  const { data: session, error: fetchError } = await supabase
+    .from("scheduled_sessions")
+    .select("student_id, title, scheduled_at, course_id")
+    .eq("id", sessionId)
+    .eq("instructor_id", instructorId)
+    .single()
+
+  if (fetchError || !session) {
+    return { error: "Session not found" }
+  }
+
   const { error } = await supabase
     .from("scheduled_sessions")
     .delete()
     .eq("id", sessionId)
-    .eq("instructor_id", data.claims.sub as string)
+    .eq("instructor_id", instructorId)
 
   if (error) {
     return { error: error.message }
   }
 
+  await createNotification({
+    userId: session.student_id,
+    actorId: instructorId,
+    type: "class_cancelled",
+    metadata: {
+      sessionId,
+      sessionTitle: session.title,
+      courseId: session.course_id,
+      scheduledAt: session.scheduled_at,
+    },
+  })
+
   revalidatePath("/protected/calendar")
+  revalidatePath("/protected/notifications")
   return {}
 }

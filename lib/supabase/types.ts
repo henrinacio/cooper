@@ -84,7 +84,7 @@ export type NotificationWithActor = Notification & {
   actor: { full_name: string | null; avatar_url: string | null } | null;
 };
 
-export type NotificationType = "class_scheduled" | "class_confirmed" | "course_enrolled" | "course_completed";
+export type NotificationType = "class_scheduled" | "class_confirmed" | "class_cancelled" | "course_enrolled" | "course_completed";
 
 export type ScheduledSessionWithDetails = ScheduledSession & {
   courses: { title: string } | null;

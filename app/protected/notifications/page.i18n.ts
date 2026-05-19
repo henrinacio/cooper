@@ -7,6 +7,7 @@ export const translations: Record<Locale, {
   empty: string;
   classScheduled: string;
   classConfirmed: string;
+  classCancelled: string;
   confirmClass: string;
   confirmed: string;
   courseEnrolled: string;
@@ -20,6 +21,7 @@ export const translations: Record<Locale, {
     empty: "No notifications yet.",
     classScheduled: "A class was scheduled for you",
     classConfirmed: "A student confirmed a class",
+    classCancelled: "A class was cancelled",
     confirmClass: "Confirm",
     confirmed: "Confirmed",
     courseEnrolled: "You were enrolled in a course",
@@ -33,6 +35,7 @@ export const translations: Record<Locale, {
     empty: "Nenhuma notificação ainda.",
     classScheduled: "Uma aula foi agendada para você",
     classConfirmed: "Um aluno confirmou uma aula",
+    classCancelled: "Uma aula foi cancelada",
     confirmClass: "Confirmar",
     confirmed: "Confirmado",
     courseEnrolled: "Você foi matriculado em um curso",
@@ -46,6 +49,7 @@ export const translations: Record<Locale, {
     empty: "Aún no hay notificaciones.",
     classScheduled: "Se programó una clase para ti",
     classConfirmed: "Un estudiante confirmó una clase",
+    classCancelled: "Una clase fue cancelada",
     confirmClass: "Confirmar",
     confirmed: "Confirmado",
     courseEnrolled: "Te inscribieron en un curso",

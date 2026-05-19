@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { scheduleSession } from "./actions"
+import { toast } from "sonner"
 import type { CourseWithStudents } from "@/lib/supabase/types"
 import type { translations } from "./schedule-session-dialog.i18n"
 
@@ -91,7 +92,9 @@ export function ScheduleSessionDialog({ open, onOpenChange, courses, defaultDate
     setLoading(false)
     if (result.error) {
       setError(result.error)
+      toast.error(result.error)
     } else {
+      toast.success(t.scheduledSuccess)
       resetForm()
       onOpenChange(false)
     }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./publish-toggle.i18n"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 
 export function PublishToggle({ courseId, published }: { courseId: string; published: boolean }) {
   const [state, setState] = useState(published)
@@ -20,13 +21,20 @@ export function PublishToggle({ courseId, published }: { courseId: string; publi
     setLoading(true)
     const supabase = createClient()
 
-    await supabase
+    const { error } = await supabase
       .from("courses")
       .update({ published: !state })
       .eq("id", courseId)
 
-    setState(!state)
     setLoading(false)
+
+    if (error) {
+      toast.error(t.error)
+      return
+    }
+
+    setState(!state)
+    toast.success(state ? t.unpublishedSuccess : t.publishedSuccess)
     router.refresh()
   }
 
