@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -39,12 +39,24 @@ export function ScheduleSessionDialog({ open, onOpenChange, courses, defaultDate
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const selectedCourse = courses.find((c) => c.id === courseId)
+  useEffect(() => {
+    if (open) {
+      setCourseId("")
+      setStudentId("")
+      setTitle("")
+      setDateTime(defaultDate ? `${defaultDate}T09:00` : "")
+      setDurationMin("60")
+      setNotes("")
+      setError(null)
+    }
+  }, [open, defaultDate])
+
+  const selectedCourse = courses.find((course) => course.id === courseId)
   const students =
-    selectedCourse?.enrollments.map((e) => ({
-      id: (e.profiles as { id: string; full_name: string | null } | null)?.id ?? e.user_id,
+    selectedCourse?.enrollments.map((enrollment) => ({
+      id: (enrollment.profiles as { id: string; full_name: string | null } | null)?.id ?? enrollment.user_id,
       full_name:
-        (e.profiles as { id: string; full_name: string | null } | null)?.full_name ?? "Unknown",
+        (enrollment.profiles as { id: string; full_name: string | null } | null)?.full_name ?? "Unknown",
     })) ?? []
 
   function resetForm() {
@@ -85,14 +97,6 @@ export function ScheduleSessionDialog({ open, onOpenChange, courses, defaultDate
     }
   }
 
-  function setDialogOpen(value: boolean) {
-    if (value) {
-      resetForm()
-    }
-
-    onOpenChange(value)
-  }
-
   function handleSetTitle(e: React.ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value)
   }
@@ -119,7 +123,7 @@ export function ScheduleSessionDialog({ open, onOpenChange, courses, defaultDate
   }
 
   return (
-    <Dialog open={open} onOpenChange={setDialogOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t.dialogTitle}</DialogTitle>
