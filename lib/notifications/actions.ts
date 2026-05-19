@@ -67,3 +67,19 @@ export async function markAllAsRead(): Promise<void> {
 
   revalidatePath("/protected/notifications")
 }
+
+export async function deleteAllNotifications(): Promise<void> {
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    return
+  }
+
+  await supabase
+    .from("notifications")
+    .delete()
+    .eq("user_id", data.claims.sub as string)
+
+  revalidatePath("/protected/notifications")
+}

@@ -1,19 +1,20 @@
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
-import { getNotifications, markAllAsRead, markAsRead } from "@/lib/notifications/actions"
+import { getNotifications, markAllAsRead, markAsRead, deleteAllNotifications } from "@/lib/notifications/actions"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import type { NotificationType } from "@/lib/supabase/types"
 
-function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>): string {
+function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>, actorName: string | null | undefined): string {
   if (type === "class_scheduled") {
     const title = metadata.sessionTitle as string | undefined
     const at = metadata.scheduledAt as string | undefined
     if (title && at) {
       const date = new Date(at).toLocaleDateString(undefined, { dateStyle: "medium" })
-      return `"${title}" — ${date}`
+      const instructorSuffix = actorName ? ` · ${actorName}` : ""
+      return `"${title}" — ${date}${instructorSuffix}`
     }
   }
 
@@ -45,19 +46,34 @@ export default async function NotificationsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t.title}</h1>
-        {hasUnread && (
-          <form
-            action={async () => {
-              "use server"
-              await markAllAsRead()
-              revalidatePath("/protected/notifications")
-            }}
-          >
-            <Button variant="outline" size="sm" type="submit">
-              {t.markAllRead}
-            </Button>
-          </form>
-        )}
+        <div className="flex items-center gap-2">
+          {hasUnread && (
+            <form
+              action={async () => {
+                "use server"
+                await markAllAsRead()
+                revalidatePath("/protected/notifications")
+              }}
+            >
+              <Button variant="outline" size="sm" type="submit">
+                {t.markAllRead}
+              </Button>
+            </form>
+          )}
+          {notifications.length > 0 && (
+            <form
+              action={async () => {
+                "use server"
+                await deleteAllNotifications()
+                revalidatePath("/protected/notifications")
+              }}
+            >
+              <Button variant="outline" size="sm" type="submit">
+                {t.clearHistory}
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
 
       {notifications.length === 0 ? (
@@ -69,7 +85,8 @@ export default async function NotificationsPage() {
         <ul className="flex flex-col gap-1">
           {notifications.map((notification) => {
             const metadata = notification.metadata as Record<string, unknown>
-            const detail = formatMetadata(notification.type, metadata, typeLabels)
+            const actorName = (notification.actor as { full_name: string | null } | null)?.full_name
+            const detail = formatMetadata(notification.type, metadata, typeLabels, actorName)
             const label = typeLabels[notification.type as NotificationType] ?? typeLabels.unknown
 
             return (
