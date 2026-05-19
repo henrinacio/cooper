@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import { createNotification } from "@/lib/notifications/create"
 
 interface ScheduleSessionInput {
   courseId: string
@@ -35,6 +36,18 @@ export async function scheduleSession(input: ScheduleSessionInput): Promise<{ er
   if (error) {
     return { error: error.message }
   }
+
+  await createNotification({
+    userId: input.studentId,
+    actorId: data.claims.sub as string,
+    type: "class_scheduled",
+    metadata: {
+      sessionTitle: input.title,
+      courseId: input.courseId,
+      scheduledAt: input.scheduledAt,
+      durationMin: input.durationMin,
+    },
+  })
 
   revalidatePath("/protected/calendar")
   return {}

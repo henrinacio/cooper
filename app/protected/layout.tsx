@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server"
 import { Suspense } from "react"
 import BottomNav from "@/components/navigation/bottom-nav"
 import SidebarNav from "@/components/navigation/sidebar-nav"
+import { getUnreadCount } from "@/lib/notifications/actions"
 
 async function DefaultLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -17,15 +18,19 @@ async function DefaultLayout({ children }: { children: React.ReactNode }) {
     role = profile?.role ?? null
   }
 
+  const unreadCount = await getUnreadCount()
+
   return (
     <>
-      <SidebarNav role={role} />
+      <SidebarNav role={role} unreadCount={unreadCount} />
         <div className="flex-1 flex flex-col md:ml-56">
           <div className="flex-1 p-5 pb-20 md:pb-5">
-            {children}
+            <div className="max-w-4xl w-full">
+              {children}
+            </div>
           </div>
         </div>
-      <BottomNav role={role} />
+      <BottomNav role={role} unreadCount={unreadCount} />
     </>
   )
 }

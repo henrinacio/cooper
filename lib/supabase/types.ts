@@ -69,6 +69,22 @@ export interface ScheduledSession {
   created_at: string;
 }
 
+export interface Notification {
+  id: string;
+  user_id: string;
+  actor_id: string | null;
+  type: string;
+  metadata: Record<string, unknown>;
+  read: boolean;
+  created_at: string;
+}
+
+export type NotificationWithActor = Notification & {
+  actor: { full_name: string | null; avatar_url: string | null } | null;
+};
+
+export type NotificationType = "class_scheduled" | "course_enrolled" | "course_completed";
+
 export type ScheduledSessionWithDetails = ScheduledSession & {
   courses: { title: string } | null;
   student: { full_name: string | null } | null;

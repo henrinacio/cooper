@@ -159,7 +159,8 @@ export default async function LessonPage({ params }: Props) {
 
         <CompleteButton
           lessonId={lessonId}
-          userId={userId}
+          courseId={course.id}
+          instructorId={course.instructor_id}
           nextLessonId={nextLesson?.id}
           prevLessonId={prevLesson?.id}
           courseSlug={courseSlug}

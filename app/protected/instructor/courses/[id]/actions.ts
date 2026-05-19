@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { LessonType } from "@/lib/supabase/types"
+import { createNotification } from "@/lib/notifications/create"
 
 // ---- course -----------------------------------------------------------------
 
@@ -267,6 +268,22 @@ export async function addStudentToCourse(
 
     return { error: enrollError.message }
   }
+
+  const { data: course } = await supabase
+    .from("courses")
+    .select("title")
+    .eq("id", courseId)
+    .single()
+
+  await createNotification({
+    userId: studentId as string,
+    actorId: data.claims.sub as string,
+    type: "course_enrolled",
+    metadata: {
+      courseId,
+      courseTitle: course?.title ?? "",
+    },
+  })
 
   revalidatePath(`/protected/instructor/courses/${courseId}`)
   return {}

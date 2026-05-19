@@ -2,15 +2,16 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Undo2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./complete-button.i18n"
+import { markLessonComplete, markLessonIncomplete } from "./actions"
 
 interface Props {
   lessonId: string;
-  userId: string;
+  courseId: string;
+  instructorId: string;
   nextLessonId?: string;
   prevLessonId?: string;
   courseSlug: string;
@@ -18,7 +19,7 @@ interface Props {
   isPrivileged: boolean;
 }
 
-export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, courseSlug, completed, isPrivileged }: Props) {
+export function CompleteButton({ lessonId, courseId, instructorId, nextLessonId, prevLessonId, courseSlug, completed, isPrivileged }: Props) {
   const [done, setDone] = useState(completed)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -29,8 +30,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
   async function markComplete() {
     if (done) return
     setLoading(true)
-    const supabase = createClient()
-    await supabase.from("progress").upsert({ user_id: userId, lesson_id: lessonId })
+    await markLessonComplete(lessonId, courseId, instructorId)
     setDone(true)
     setLoading(false)
     router.refresh()
@@ -38,8 +38,7 @@ export function CompleteButton({ lessonId, userId, nextLessonId, prevLessonId, c
 
   async function markIncomplete() {
     setLoading(true)
-    const supabase = createClient()
-    await supabase.from("progress").delete().eq("user_id", userId).eq("lesson_id", lessonId)
+    await markLessonIncomplete(lessonId)
     setDone(false)
     setLoading(false)
     router.refresh()

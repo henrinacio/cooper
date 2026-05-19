@@ -7,7 +7,7 @@ import { getNavItems } from "@/components/navigation/nav-items"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./nav-items.i18n"
 
-export default function SidebarNav({ role }: { role: string | null }) {
+export default function SidebarNav({ role, unreadCount = 0 }: { role: string | null; unreadCount?: number }) {
   const pathname = usePathname()
   const locale = useLocale()
   const NAV_ITEMS = getNavItems(role, translations[locale])
@@ -17,8 +17,9 @@ export default function SidebarNav({ role }: { role: string | null }) {
       <div className="px-3 mb-6 font-semibold text-lg tracking-tight">
         Cooper
       </div>
-      {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+      {NAV_ITEMS.map(({ href, label, icon: Icon, showBadge }) => {
         const active = pathname === href || pathname.startsWith(href + "/")
+        const badgeCount = showBadge ? unreadCount : 0
         return (
           <Link
             key={href}
@@ -32,6 +33,11 @@ export default function SidebarNav({ role }: { role: string | null }) {
           >
             <Icon size={16} strokeWidth={active ? 2.5 : 1.75} />
             {label}
+            {badgeCount > 0 && (
+              <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center leading-none">
+                {badgeCount > 99 ? "99+" : badgeCount}
+              </span>
+            )}
           </Link>
         )
       })}
