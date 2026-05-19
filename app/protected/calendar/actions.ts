@@ -87,11 +87,23 @@ export async function confirmSession(sessionId: string): Promise<{ error?: strin
     return { error: updateError.message }
   }
 
-  await supabase
+  const { data: existingNotification } = await supabase
     .from("notifications")
-    .update({ metadata: { sessionId, confirmed: true } as never })
+    .select("id, metadata")
     .eq("user_id", studentId)
     .filter("metadata", "@>", JSON.stringify({ sessionId }))
+    .maybeSingle()
+
+  if (existingNotification) {
+    const mergedMetadata = {
+      ...(existingNotification.metadata as Record<string, unknown>),
+      confirmed: true,
+    }
+    await supabase
+      .from("notifications")
+      .update({ metadata: mergedMetadata as never })
+      .eq("id", existingNotification.id)
+  }
 
   await createNotification({
     userId: session.instructor_id,

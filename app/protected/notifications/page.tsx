@@ -1,21 +1,38 @@
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 import { getNotifications, markAllAsRead, markAsRead, deleteAllNotifications } from "@/lib/notifications/actions"
-import { confirmSession } from "@/app/protected/calendar/actions"
 import { Bell } from "lucide-react"
+import { ConfirmButton } from "./confirm-button"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import type { NotificationType } from "@/lib/supabase/types"
 
-function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>, actorName: string | null | undefined): string {
+const LOCALE_BCP47: Record<string, string> = {
+  en: "en",
+  pt: "pt-BR",
+  es: "es",
+}
+
+function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>, actorName: string | null | undefined, bcp47: string): string {
   if (type === "class_scheduled") {
     const title = metadata.sessionTitle as string | undefined
     const at = metadata.scheduledAt as string | undefined
     if (title && at) {
-      const date = new Date(at).toLocaleDateString(undefined, { dateStyle: "medium" })
+      const date = new Date(at).toLocaleDateString(bcp47, { dateStyle: "medium" })
       const instructorSuffix = actorName ? ` · ${actorName}` : ""
       return `"${title}" — ${date}${instructorSuffix}`
+    }
+  }
+
+  if (type === "class_confirmed") {
+    const title = metadata.sessionTitle as string | undefined
+    const at = metadata.scheduledAt as string | undefined
+    if (title && at) {
+      const date = new Date(at).toLocaleDateString(bcp47, { dateStyle: "medium" })
+      const time = new Date(at).toLocaleTimeString(bcp47, { timeStyle: "short" })
+      const studentSuffix = actorName ? ` · ${actorName}` : ""
+      return `"${title}" — ${date} ${time}${studentSuffix}`
     }
   }
 
@@ -27,6 +44,8 @@ function formatMetadata(type: string, metadata: Record<string, unknown>, typeLab
     }
   }
 
+
+
   return typeLabels[type as NotificationType] ?? typeLabels.unknown
 }
 
@@ -34,6 +53,7 @@ export default async function NotificationsPage() {
   const locale = await getLocale()
   const t = translations[locale]
   const { notifications } = await getNotifications()
+  const bcp47 = LOCALE_BCP47[locale] ?? "en"
 
   const typeLabels: Record<string, string> = {
     class_scheduled: t.classScheduled,
@@ -89,7 +109,7 @@ export default async function NotificationsPage() {
           {notifications.map((notification) => {
             const metadata = notification.metadata as Record<string, unknown>
             const actorName = (notification.actor as { full_name: string | null } | null)?.full_name
-            const detail = formatMetadata(notification.type, metadata, typeLabels, actorName)
+            const detail = formatMetadata(notification.type, metadata, typeLabels, actorName, bcp47)
             const label = typeLabels[notification.type as NotificationType] ?? typeLabels.unknown
 
             return (
@@ -107,17 +127,14 @@ export default async function NotificationsPage() {
                   <p className="text-xs text-muted-foreground">
                     {new Date(notification.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
                   </p>
-                  {notification.type === "class_scheduled" && !metadata.confirmed && !!metadata.sessionId && (
-                    <form
-                      action={async () => {
-                        "use server"
-                        await confirmSession(metadata.sessionId as string)
-                      }}
-                    >
-                      <Button type="submit" size="sm" variant="outline" className="mt-1.5 h-7 text-xs">
-                        {t.confirmClass}
-                      </Button>
-                    </form>
+                  {notification.type === "class_scheduled" && !!metadata.sessionId && (
+                    metadata.confirmed
+                      ? <span className="text-xs text-muted-foreground mt-1">{t.confirmed}</span>
+                      : <ConfirmButton
+                          sessionId={metadata.sessionId as string}
+                          labelConfirm={t.confirmClass}
+                          labelConfirmed={t.confirmed}
+                        />
                   )}
                 </div>
                 {!notification.read && (
