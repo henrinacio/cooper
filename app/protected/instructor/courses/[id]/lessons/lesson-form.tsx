@@ -9,6 +9,7 @@ import { createLesson, updateLesson } from "../actions"
 import { Lesson, LessonType } from "@/lib/supabase/types"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./lesson-form.i18n"
+import { toast } from "sonner"
 
 interface Props {
   courseId: string;
@@ -20,7 +21,6 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
   const router = useRouter()
   const [type, setType] = useState<LessonType>(lesson?.type ?? "text")
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const locale = useLocale()
   const t = translations[locale]
@@ -40,7 +40,6 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
 
   async function submit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError(null)
     setLoading(true)
 
     const form = new FormData(e.currentTarget)
@@ -66,20 +65,22 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
       setLoading(false)
 
       if (result.error) {
-        setError(result.error)
+        toast.error(result.error)
         return
       }
 
+      toast.success(t.successEdit)
       router.push(`/protected/instructor/courses/${courseId}`)
     } else {
       const result = await createLesson(courseId, moduleId, data)
       setLoading(false)
 
       if (result.error) {
-        setError(result.error)
+        toast.error(result.error)
         return
       }
 
+      toast.success(t.successCreate)
       router.push(`/protected/instructor/courses/${courseId}`)
     }
   }
@@ -157,9 +158,7 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
         </div>
       )}
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
-      <div className="flex gap-2">
+<div className="flex gap-2">
         <Button type="submit" disabled={loading}>
           {loading ? t.saving : isEdit ? t.saveChanges : t.createLesson}
         </Button>

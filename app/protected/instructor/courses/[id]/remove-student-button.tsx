@@ -14,6 +14,7 @@ import { removeStudentFromCourse } from "./actions"
 import { X } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./remove-student-button.i18n"
+import { toast } from "sonner"
 
 interface Props {
   courseId: string;
@@ -29,7 +30,14 @@ export function RemoveStudentButton({ courseId, enrollmentId }: Props) {
 
   async function remove() {
     setLoading(true)
-    await removeStudentFromCourse(courseId, enrollmentId)
+    const result = await removeStudentFromCourse(courseId, enrollmentId)
+    setLoading(false)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(t.removedSuccess)
+      setOpen(false)
+    }
   }
 
   return (

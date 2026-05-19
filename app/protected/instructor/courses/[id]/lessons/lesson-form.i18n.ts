@@ -16,6 +16,8 @@ export const translations: Record<Locale, {
   saveChanges: string
   createLesson: string
   cancel: string
+  successCreate: string
+  successEdit: string
 }> = {
   en: {
     titleLabel: "Title",
@@ -33,6 +35,8 @@ export const translations: Record<Locale, {
     saveChanges: "Save Changes",
     createLesson: "Create Lesson",
     cancel: "Cancel",
+    successCreate: "Lesson created",
+    successEdit: "Lesson updated",
   },
   pt: {
     titleLabel: "Título",
@@ -50,6 +54,8 @@ export const translations: Record<Locale, {
     saveChanges: "Salvar Alterações",
     createLesson: "Criar Aula",
     cancel: "Cancelar",
+    successCreate: "Aula criada",
+    successEdit: "Aula atualizada",
   },
   es: {
     titleLabel: "Título",
@@ -67,5 +73,7 @@ export const translations: Record<Locale, {
     saveChanges: "Guardar Cambios",
     createLesson: "Crear Lección",
     cancel: "Cancelar",
+    successCreate: "Lección creada",
+    successEdit: "Lección actualizada",
   },
 }

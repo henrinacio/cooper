@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { renameModule } from "./actions"
 import { Pencil, Check, X } from "lucide-react"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./rename-module-button.i18n"
+import { toast } from "sonner"
 
 interface Props {
   courseId: string;
@@ -16,6 +19,9 @@ export function RenameModuleButton({ courseId, moduleId, currentTitle }: Props) 
   const [editing, setEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const locale = useLocale()
+  const t = translations[locale]
 
   function startEdit() {
     setEditing(true)
@@ -29,9 +35,14 @@ export function RenameModuleButton({ courseId, moduleId, currentTitle }: Props) 
       return
     }
     setLoading(true)
-    await renameModule(courseId, moduleId, value)
+    const result = await renameModule(courseId, moduleId, value)
     setLoading(false)
-    setEditing(false)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(t.renamedSuccess)
+      setEditing(false)
+    }
   }
 
   function onKeyDown(e: React.KeyboardEvent) {

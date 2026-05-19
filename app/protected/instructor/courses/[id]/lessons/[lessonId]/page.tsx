@@ -16,8 +16,11 @@ export default async function EditLessonPage({ params }: Props) {
   const { id, lessonId } = await params
   const supabase = await createClient()
 
-  const { data: claims } = await supabase.auth.getClaims()
-  if (!claims?.claims) redirect("/auth/login")
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    redirect("/auth/login")
+  }
 
   const { data: lesson } = await supabase
     .from("lessons")
@@ -26,7 +29,9 @@ export default async function EditLessonPage({ params }: Props) {
     .eq("modules.course_id", id)
     .single<Lesson & { modules: { course_id: string } }>()
 
-  if (!lesson) notFound()
+  if (!lesson) {
+    notFound()
+  }
 
   const { data: module } = await supabase
     .from("modules")

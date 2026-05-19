@@ -3,6 +3,7 @@ import { Geist } from "next/font/google"
 import { ThemeProvider } from "next-themes"
 import { Suspense } from "react"
 import { LocaleWrapper } from "./_locale-wrapper"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const defaultUrl = process.env.VERCEL_URL
@@ -38,6 +39,7 @@ export default function RootLayout({
           <Suspense>
             <LocaleWrapper>{children}</LocaleWrapper>
           </Suspense>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

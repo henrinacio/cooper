@@ -8,28 +8,25 @@ import { addStudentToCourse } from "./actions"
 import { UserPlus } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./add-student-form.i18n"
+import { toast } from "sonner"
 
 export function AddStudentForm({ courseId }: { courseId: string }) {
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
 
   const locale = useLocale()
   const t = translations[locale]
 
   async function submit(e: React.SyntheticEvent) {
     e.preventDefault()
-    setError(null)
-    setSuccess(null)
     setLoading(true)
 
     const result = await addStudentToCourse(courseId, email.trim())
 
     if (result.error) {
-      setError(result.error)
+      toast.error(result.error)
     } else {
-      setSuccess(`${email} ${t.enrolledSuccess}`)
+      toast.success(`${email} ${t.enrolledSuccess}`)
       setEmail("")
     }
 
@@ -54,8 +51,6 @@ export function AddStudentForm({ courseId }: { courseId: string }) {
           {loading ? t.adding : t.add}
         </Button>
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
-      {success && <p className="text-sm text-green-600 dark:text-green-400">{success}</p>}
     </form>
   )
 }

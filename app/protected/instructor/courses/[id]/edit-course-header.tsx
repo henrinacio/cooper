@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { updateCourse } from "./actions"
 import { Pencil, Check, X } from "lucide-react"
+import { useLocale } from "@/components/locale-provider"
+import { translations } from "./edit-course-header.i18n"
+import { toast } from "sonner"
 
 interface Props {
   courseId: string;
@@ -17,6 +20,9 @@ export function EditCourseHeader({ courseId, title, description }: Props) {
   const [loading, setLoading] = useState(false)
   const titleRef = useRef<HTMLInputElement>(null)
   const descRef = useRef<HTMLTextAreaElement>(null)
+
+  const locale = useLocale()
+  const t = translations[locale]
 
   function startEdit() {
     setEditing(true)
@@ -35,9 +41,14 @@ export function EditCourseHeader({ courseId, title, description }: Props) {
       return
     }
     setLoading(true)
-    await updateCourse(courseId, newTitle, newDesc)
+    const result = await updateCourse(courseId, newTitle, newDesc)
     setLoading(false)
-    setEditing(false)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(t.savedSuccess)
+      setEditing(false)
+    }
   }
 
   function onKeyDown(e: React.KeyboardEvent) {

@@ -14,6 +14,7 @@ import { deleteModule } from "./actions"
 import { Trash2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./delete-module-button.i18n"
+import { toast } from "sonner"
 
 interface Props {
   courseId: string;
@@ -29,7 +30,14 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
 
   async function remove() {
     setLoading(true)
-    await deleteModule(courseId, moduleId)
+    const result = await deleteModule(courseId, moduleId)
+    setLoading(false)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(t.deletedSuccess)
+      setOpen(false)
+    }
   }
 
   return (
