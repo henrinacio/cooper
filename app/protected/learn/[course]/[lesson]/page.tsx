@@ -5,6 +5,7 @@ import Link from "next/link"
 import { cn, toEmbedUrl } from "@/lib/utils"
 import { CheckCircle, BookOpen, ArrowLeft } from "lucide-react"
 import { CompleteButton } from "./complete-button"
+import { QuizViewer } from "./quiz-viewer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getLocale } from "@/lib/locale"
@@ -151,7 +152,21 @@ export default async function LessonPage({ params }: Props) {
           </div>
         )}
 
-        {lesson.content && (
+        {lesson.type === "quiz" && lesson.content && (
+          <QuizViewer
+            content={lesson.content}
+            t={{
+              submitQuiz: t.submitQuiz,
+              score: t.score,
+              correct: t.correct,
+              incorrect: t.incorrect,
+              openEnded: t.openEnded,
+              retake: t.retake,
+            }}
+          />
+        )}
+
+        {lesson.type !== "quiz" && lesson.content && (
           <div className="prose dark:prose-invert max-w-none">
             <p className="whitespace-pre-wrap">{lesson.content}</p>
           </div>

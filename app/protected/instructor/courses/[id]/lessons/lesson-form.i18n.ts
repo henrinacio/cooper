@@ -10,7 +10,6 @@ export const translations: Record<Locale, {
   videoUrl: string
   duration: string
   content: string
-  quizPlaceholder: string
   textPlaceholder: string
   saving: string
   saveChanges: string
@@ -18,6 +17,11 @@ export const translations: Record<Locale, {
   cancel: string
   successCreate: string
   successEdit: string
+  addQuestion: string
+  addOption: string
+  questionPlaceholder: string
+  optionPlaceholder: string
+  markCorrect: string
 }> = {
   en: {
     titleLabel: "Title",
@@ -29,7 +33,6 @@ export const translations: Record<Locale, {
     videoUrl: "Video URL",
     duration: "Duration (seconds)",
     content: "Content",
-    quizPlaceholder: "JSON quiz definition or question text…",
     textPlaceholder: "Lesson content (Markdown supported)",
     saving: "Saving…",
     saveChanges: "Save Changes",
@@ -37,6 +40,11 @@ export const translations: Record<Locale, {
     cancel: "Cancel",
     successCreate: "Lesson created",
     successEdit: "Lesson updated",
+    addQuestion: "Add question",
+    addOption: "Add option",
+    questionPlaceholder: "Type your question…",
+    optionPlaceholder: "Option",
+    markCorrect: "Mark as correct answer",
   },
   pt: {
     titleLabel: "Título",
@@ -48,7 +56,6 @@ export const translations: Record<Locale, {
     videoUrl: "URL do Vídeo",
     duration: "Duração (segundos)",
     content: "Conteúdo",
-    quizPlaceholder: "Definição do quiz em JSON ou texto da questão…",
     textPlaceholder: "Conteúdo da aula (Markdown suportado)",
     saving: "Salvando…",
     saveChanges: "Salvar Alterações",
@@ -56,6 +63,11 @@ export const translations: Record<Locale, {
     cancel: "Cancelar",
     successCreate: "Aula criada",
     successEdit: "Aula atualizada",
+    addQuestion: "Adicionar questão",
+    addOption: "Adicionar opção",
+    questionPlaceholder: "Digite sua questão…",
+    optionPlaceholder: "Opção",
+    markCorrect: "Marcar como resposta correta",
   },
   es: {
     titleLabel: "Título",
@@ -67,7 +79,6 @@ export const translations: Record<Locale, {
     videoUrl: "URL del Video",
     duration: "Duración (segundos)",
     content: "Contenido",
-    quizPlaceholder: "Definición del quiz en JSON o texto de la pregunta…",
     textPlaceholder: "Contenido de la lección (Markdown compatible)",
     saving: "Guardando…",
     saveChanges: "Guardar Cambios",
@@ -75,5 +86,10 @@ export const translations: Record<Locale, {
     cancel: "Cancelar",
     successCreate: "Lección creada",
     successEdit: "Lección actualizada",
+    addQuestion: "Agregar pregunta",
+    addOption: "Agregar opción",
+    questionPlaceholder: "Escribe tu pregunta…",
+    optionPlaceholder: "Opción",
+    markCorrect: "Marcar como respuesta correcta",
   },
 }
