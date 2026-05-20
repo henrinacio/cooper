@@ -78,7 +78,7 @@ export default async function NotificationsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-y-2">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t.title}</h1>
         <div className="flex items-center gap-2">
           {hasUnread && (
@@ -134,7 +134,7 @@ export default async function NotificationsPage() {
                 <Bell size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
                 <div className="flex-1 flex flex-col gap-0.5 min-w-0">
                   <p className={cn("text-sm", !notification.read && "font-medium")}>{label}</p>
-                  <p className="text-xs text-muted-foreground truncate">{detail}</p>
+                  <p className="text-xs text-muted-foreground">{detail}</p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(notification.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
                   </p>
