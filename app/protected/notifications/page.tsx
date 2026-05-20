@@ -8,18 +8,18 @@ import { cn } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import type { NotificationType } from "@/lib/supabase/types"
 
-const LOCALE_BCP47: Record<string, string> = {
+const LOCALE_LANGUAGE: Record<string, string> = {
   en: "en",
   pt: "pt-BR",
   es: "es",
 }
 
-function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>, actorName: string | null | undefined, bcp47: string): string {
+function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>, actorName: string | null | undefined, localeLanguage: string): string {
   if (type === "class_scheduled") {
     const title = metadata.sessionTitle as string | undefined
     const at = metadata.scheduledAt as string | undefined
     if (title && at) {
-      const date = new Date(at).toLocaleDateString(bcp47, { dateStyle: "medium" })
+      const date = new Date(at).toLocaleDateString(localeLanguage, { dateStyle: "medium" })
       const instructorSuffix = actorName ? ` · ${actorName}` : ""
       return `"${title}" — ${date}${instructorSuffix}`
     }
@@ -29,8 +29,8 @@ function formatMetadata(type: string, metadata: Record<string, unknown>, typeLab
     const title = metadata.sessionTitle as string | undefined
     const at = metadata.scheduledAt as string | undefined
     if (title && at) {
-      const date = new Date(at).toLocaleDateString(bcp47, { dateStyle: "medium" })
-      const time = new Date(at).toLocaleTimeString(bcp47, { timeStyle: "short" })
+      const date = new Date(at).toLocaleDateString(localeLanguage, { dateStyle: "medium" })
+      const time = new Date(at).toLocaleTimeString(localeLanguage, { timeStyle: "short" })
       const studentSuffix = actorName ? ` · ${actorName}` : ""
       return `"${title}" — ${date} ${time}${studentSuffix}`
     }
@@ -40,7 +40,7 @@ function formatMetadata(type: string, metadata: Record<string, unknown>, typeLab
     const title = metadata.sessionTitle as string | undefined
     const at = metadata.scheduledAt as string | undefined
     if (title && at) {
-      const date = new Date(at).toLocaleDateString(bcp47, { dateStyle: "medium" })
+      const date = new Date(at).toLocaleDateString(localeLanguage, { dateStyle: "medium" })
       const instructorSuffix = actorName ? ` · ${actorName}` : ""
       return `"${title}" — ${date}${instructorSuffix}`
     }
@@ -63,7 +63,7 @@ export default async function NotificationsPage() {
   const locale = await getLocale()
   const t = translations[locale]
   const { notifications } = await getNotifications()
-  const bcp47 = LOCALE_BCP47[locale] ?? "en"
+  const localeLanguage = LOCALE_LANGUAGE[locale] ?? "en"
 
   const typeLabels: Record<string, string> = {
     class_scheduled: t.classScheduled,
@@ -120,7 +120,7 @@ export default async function NotificationsPage() {
           {notifications.map((notification) => {
             const metadata = notification.metadata as Record<string, unknown>
             const actorName = (notification.actor as { full_name: string | null } | null)?.full_name
-            const detail = formatMetadata(notification.type, metadata, typeLabels, actorName, bcp47)
+            const detail = formatMetadata(notification.type, metadata, typeLabels, actorName, localeLanguage)
             const label = typeLabels[notification.type as NotificationType] ?? typeLabels.unknown
 
             return (

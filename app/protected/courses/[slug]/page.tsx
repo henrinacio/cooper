@@ -68,8 +68,6 @@ export default async function CourseDetailPage({ params }: Props) {
 
   const isPrivileged = profile ? ['instructor', 'admin'].includes(profile.role) : false
 
-  console.log(course)
-
   return (
     <div className="flex flex-col gap-8">
       <BackButton href={isPrivileged ? '/protected/instructor/courses' : '/protected/dashboard'} />

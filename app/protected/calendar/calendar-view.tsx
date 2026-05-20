@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"
 import type { translations as pageTranslations } from "./page.i18n"
 import type { translations as dialogTranslations } from "./schedule-session-dialog.i18n"
+import { useLocale } from "@/components/locale-provider"
 
 type CalendarTranslations = (typeof pageTranslations)[keyof typeof pageTranslations]
 type DialogTranslations = (typeof dialogTranslations)[keyof typeof dialogTranslations]
@@ -47,13 +48,22 @@ interface SessionCardProps {
   t: CalendarTranslations
 }
 
+const LOCALE_LANGUAGE: Record<string, string> = {
+  en: "en",
+  pt: "pt-BR",
+  es: "es",
+}
+
 function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
   const [deleting, setDeleting] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [confirmed, setConfirmed] = useState(session.confirmed)
   const [confirming, setConfirming] = useState(false)
 
-  const time = new Date(session.scheduled_at).toLocaleTimeString(undefined, {
+  const locale = useLocale()
+  const localeLanguage = LOCALE_LANGUAGE[locale] ?? "en"
+
+  const time = new Date(session.scheduled_at).toLocaleTimeString(localeLanguage, {
     hour: "2-digit",
     minute: "2-digit",
   })
@@ -172,12 +182,16 @@ export function CalendarView({ sessions, role, courses, t, dialogT }: Props) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
+  const locale = useLocale()
+  const localeLanguage = LOCALE_LANGUAGE[locale] ?? "en"
+
   useEffect(() => {
     const today = new Date()
     const ts = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
     setTodayString(ts)
     setSelectedDate(ts)
   }, [])
+
 
   const days = buildDays(year, month)
 
@@ -286,7 +300,7 @@ export function CalendarView({ sessions, role, courses, t, dialogT }: Props) {
       {selectedDate && (
         <div className="flex flex-col gap-3">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide" suppressHydrationWarning>
-            {new Date(selectedDate + "T12:00").toLocaleDateString(undefined, {
+            {new Date(selectedDate + "T12:00").toLocaleDateString(localeLanguage, {
               weekday: "long",
               month: "long",
               day: "numeric",
@@ -297,7 +311,12 @@ export function CalendarView({ sessions, role, courses, t, dialogT }: Props) {
             <p className="text-sm text-muted-foreground">{t.noSessions}</p>
           ) : (
             selectedSessions.map((selectedSession) => (
-              <SessionCard key={selectedSession.id} session={selectedSession} isPrivileged={isPrivileged} t={t} />
+              <SessionCard
+                key={selectedSession.id}
+                session={selectedSession}
+                isPrivileged={isPrivileged}
+                t={t}
+              />
             ))
           )}
         </div>
