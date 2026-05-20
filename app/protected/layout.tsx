@@ -23,7 +23,7 @@ async function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SidebarNav role={role} unreadCount={unreadCount} />
-        <div className="flex-1 flex flex-col md:ml-56">
+        <div className="flex-1 min-w-0 flex flex-col md:ml-56">
           <div className="flex-1 p-5 pb-20 md:pb-5">
             <div className="max-w-4xl w-full">
               {children}
