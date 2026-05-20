@@ -111,3 +111,7 @@ export type ModuleWithLessons = Module & {
 export type CourseWithModules = Course & {
   modules: ModuleWithLessons[];
 };
+
+export type CourseWithModulesAndInstructor = CourseWithModules & {
+  profiles: Pick<Profile, "id" | "full_name" | "avatar_url"> | null;
+};

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { CourseWithModules } from "@/lib/supabase/types"
+import { CourseWithModulesAndInstructor } from "@/lib/supabase/types"
 import { notFound, redirect } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -45,12 +45,12 @@ export default async function CourseDetailPage({ params }: Props) {
   const { data: course } = await supabase
     .from("courses")
     .select(
-      "*, modules(id, title, order, lessons(id, title, type, duration_s, order))",
+      "*, profiles!instructor_id(id, full_name, avatar_url), modules(id, title, order, lessons(id, title, type, duration_s, order))",
     )
     .eq("slug", slug)
     .order("order", { referencedTable: "modules" })
     .order("order", { referencedTable: "modules.lessons" })
-    .single<CourseWithModules>()
+    .single<CourseWithModulesAndInstructor>()
 
   if (!course) {
     notFound()
@@ -86,6 +86,11 @@ export default async function CourseDetailPage({ params }: Props) {
           </div>
           {course.description && (
             <p className="text-muted-foreground">{course.description}</p>
+          )}
+          {course.profiles?.full_name && (
+            <p className="text-sm text-muted-foreground">
+              {t.instructor}: <span className="font-medium text-foreground">{course.profiles.full_name}</span>
+            </p>
           )}
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
