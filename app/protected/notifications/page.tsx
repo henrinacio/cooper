@@ -136,7 +136,7 @@ export default async function NotificationsPage() {
                   <p className={cn("text-sm", !notification.read && "font-medium")}>{label}</p>
                   <p className="text-xs text-muted-foreground">{detail}</p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(notification.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
+                    {new Date(notification.created_at).toLocaleDateString(localeLanguage, { dateStyle: "medium" })}
                   </p>
                   {notification.type === "class_scheduled" && !!metadata.sessionId && (
                     metadata.confirmed
