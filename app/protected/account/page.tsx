@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
+import { LOCALE_LANGUAGE } from "@/lib/utils"
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -29,8 +30,10 @@ async function AccountDetails() {
   const locale = await getLocale()
   const t = translations[locale]
 
+  const localeLanguage = LOCALE_LANGUAGE[locale] ?? "en"
+
   const name = data.user.user_metadata?.full_name ?? data.user.user_metadata?.name ?? "—"
-  const joinedDate = new Date(data.user.created_at).toLocaleDateString(t.dateLocale, {
+  const joinedDate = new Date(data.user.created_at).toLocaleDateString(localeLanguage, {
     year: "numeric",
     month: "long",
     day: "numeric",

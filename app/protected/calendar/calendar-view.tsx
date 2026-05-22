@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { ScheduleSessionDialog } from "./schedule-session-dialog"
 import { deleteSession, confirmSession } from "./actions"
-import { cn } from "@/lib/utils"
+import { cn, LOCALE_LANGUAGE } from "@/lib/utils"
 import { toast } from "sonner"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"
 import type { translations as pageTranslations } from "./page.i18n"
@@ -48,11 +48,6 @@ interface SessionCardProps {
   t: CalendarTranslations
 }
 
-const LOCALE_LANGUAGE: Record<string, string> = {
-  en: "en",
-  pt: "pt-BR",
-  es: "es",
-}
 
 function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
   const [deleting, setDeleting] = useState(false)

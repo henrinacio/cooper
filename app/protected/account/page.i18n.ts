@@ -9,7 +9,6 @@ export const translations: Record<Locale, {
   preferences: string
   theme: string
   language: string
-  dateLocale: string
 }> = {
   en: {
     title: "Account",
@@ -20,7 +19,6 @@ export const translations: Record<Locale, {
     preferences: "Preferences",
     theme: "Theme",
     language: "Language",
-    dateLocale: "en-US",
   },
   pt: {
     title: "Conta",
@@ -31,7 +29,6 @@ export const translations: Record<Locale, {
     preferences: "Preferências",
     theme: "Tema",
     language: "Idioma",
-    dateLocale: "pt-BR",
   },
   es: {
     title: "Cuenta",
@@ -42,6 +39,5 @@ export const translations: Record<Locale, {
     preferences: "Preferencias",
     theme: "Tema",
     language: "Idioma",
-    dateLocale: "es-ES",
   },
 }

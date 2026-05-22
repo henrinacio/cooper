@@ -4,15 +4,9 @@ import { getNotifications, markAllAsRead, markAsRead, deleteAllNotifications } f
 import { Bell } from "lucide-react"
 import { ConfirmButton } from "./confirm-button"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, LOCALE_LANGUAGE } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import type { NotificationType } from "@/lib/supabase/types"
-
-const LOCALE_LANGUAGE: Record<string, string> = {
-  en: "en",
-  pt: "pt-BR",
-  es: "es",
-}
 
 function formatMetadata(type: string, metadata: Record<string, unknown>, typeLabels: Record<string, string>, actorName: string | null | undefined, localeLanguage: string): string {
   if (type === "class_scheduled") {

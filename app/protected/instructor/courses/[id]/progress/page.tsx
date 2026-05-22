@@ -8,17 +8,12 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
+import { LOCALE_LANGUAGE } from "@/lib/utils"
 
 type EnrollmentProfile = { id: string; full_name: string | null }
 
 interface Props {
   params: Promise<{ id: string }>
-}
-
-const LOCALE_LANGUAGE: Record<string, string> = {
-  en: "en",
-  pt: "pt-BR",
-  es: "es",
 }
 
 export default async function CourseProgressPage({ params }: Props) {

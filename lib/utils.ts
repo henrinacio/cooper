@@ -1,6 +1,12 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+export const LOCALE_LANGUAGE: Record<string, string> = {
+  en: "en",
+  pt: "pt-BR",
+  es: "es",
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
