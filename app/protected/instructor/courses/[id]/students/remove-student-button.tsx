@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { removeStudentFromCourse } from "./actions"
+import { removeStudentFromCourse } from "../actions"
 import { X } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./remove-student-button.i18n"
@@ -45,7 +45,7 @@ export function RemoveStudentButton({ courseId, enrollmentId }: Props) {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => setOpen(true)}
+        onClick={(e) => { e.preventDefault(); setOpen(true) }}
         className="text-muted-foreground hover:text-destructive"
       >
         <X size={16} />
