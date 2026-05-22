@@ -18,8 +18,6 @@ import { EditCourseHeader } from "./edit-course-header"
 import { DeleteCourseButton } from "./delete-course-button"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
-import { StudentNotesPanel } from "./student-notes-panel"
-import type { StudentNote } from "@/lib/supabase/types"
 
 type EnrollmentProfile = { id: string; full_name: string | null };
 
@@ -55,23 +53,6 @@ export default async function EditCoursePage({ params }: Props) {
     .select("id, user_id, enrolled_at, profiles(id, full_name)")
     .eq("course_id", id)
     .order("enrolled_at", { ascending: false })
-
-  const { data: studentNotes } = await supabase
-    .from("student_notes")
-    .select("*")
-    .eq("course_id", id)
-    .eq("instructor_id", data.claims.sub as string)
-    .order("pinned", { ascending: false })
-    .order("created_at", { ascending: false })
-
-  const notesByStudentId = (studentNotes ?? []).reduce<Record<string, StudentNote[]>>(
-    (accumulator, note) => {
-      const studentNoteList = accumulator[note.student_id] ?? []
-      accumulator[note.student_id] = [...studentNoteList, note as StudentNote]
-      return accumulator
-    },
-    {}
-  )
 
   const locale = await getLocale()
   const t = translations[locale]
@@ -195,12 +176,11 @@ export default async function EditCoursePage({ params }: Props) {
                         enrollmentId={enrollment.id}
                       />
                     </div>
-                    <StudentNotesPanel
-                      courseId={course.id}
-                      studentId={(enrollment.profiles as unknown as EnrollmentProfile)?.id ?? ""}
-                      studentName={studentFullName ?? null}
-                      initialNotes={notesByStudentId[(enrollment.profiles as unknown as EnrollmentProfile)?.id] ?? []}
-                    />
+                    <Button asChild variant="outline" size="sm" className="self-start">
+                      <Link href={`/protected/instructor/students/${enrollment.user_id}`}>
+                        {t.viewProfile}
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               )

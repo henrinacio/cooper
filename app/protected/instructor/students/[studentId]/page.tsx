@@ -17,13 +17,13 @@ export default async function StudentProfilePage({ params }: Props) {
   const { studentId } = await params
   const supabase = await createClient()
 
-  const { data: authData } = await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims()
 
-  if (!authData?.claims) {
+  if (!data?.claims) {
     redirect("/auth/login")
   }
 
-  const instructorId = authData.claims.sub as string
+  const instructorId = data.claims.sub as string
 
   const { data: student } = await supabase
     .from("profiles")
@@ -77,18 +77,20 @@ export default async function StudentProfilePage({ params }: Props) {
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-muted shrink-0">
           {student.avatar_url ? (
             <img
+              width={16}
+              height={16}
               src={student.avatar_url}
               alt={student.full_name ?? ""}
-              className="w-14 h-14 rounded-full object-cover"
+              className="w-16 h-16 rounded-full object-cover"
             />
           ) : (
-            <User size={28} className="text-muted-foreground" />
+            <User size={32} className="text-muted-foreground" />
           )}
         </div>
         <div className="flex flex-col gap-0.5">
           <h1 className="text-2xl font-bold">{student.full_name ?? "—"}</h1>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <StickyNote size={14} />
+            <StickyNote size={16} />
             <span>{totalNoteCount} {t.noteCount}{totalNoteCount !== 1 ? "s" : ""}</span>
           </div>
         </div>
@@ -122,7 +124,7 @@ export default async function StudentProfilePage({ params }: Props) {
                     <div className="flex flex-wrap items-center gap-1">
                       {note.pinned && (
                         <Badge variant="outline" className="text-[10px] h-4 px-1 gap-0.5 border-primary/50 text-primary">
-                          <Pin size={9} />
+                          <Pin size={8} />
                           {t.pinnedLabel}
                         </Badge>
                       )}
