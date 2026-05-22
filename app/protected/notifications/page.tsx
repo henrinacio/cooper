@@ -1,7 +1,7 @@
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 import { getNotifications, markAllAsRead, markAsRead, deleteAllNotifications } from "@/lib/notifications/actions"
-import { Bell } from "lucide-react"
+import { Bell, Check } from "lucide-react"
 import { ConfirmButton } from "./confirm-button"
 import { Button } from "@/components/ui/button"
 import { cn, LOCALE_LANGUAGE } from "@/lib/utils"
@@ -148,12 +148,13 @@ export default async function NotificationsPage() {
                       revalidatePath("/protected/notifications")
                     }}
                   >
-                    <button
+                    <Button
                       type="submit"
+                      variant="ghost"
                       className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0 mt-0.5"
                     >
-                      ✕
-                    </button>
+                      <Check size={16} />
+                    </Button>
                   </form>
                 )}
               </li>
