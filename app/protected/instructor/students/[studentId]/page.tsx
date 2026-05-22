@@ -27,6 +27,16 @@ type CourseRow = {
   }[];
 }
 
+type EnrollmentRow = {
+  course_id: string;
+  enrolled_at: string;
+}
+
+type ProgressRow = {
+  lesson_id: string;
+  completed_at: string;
+}
+
 export default async function StudentProfilePage({ params }: Props) {
   const { studentId } = await params
   const supabase = await createClient()
@@ -51,10 +61,14 @@ export default async function StudentProfilePage({ params }: Props) {
 
   const { data: enrollments } = await supabase
     .from("enrollments")
-    .select("course_id")
+    .select("course_id, enrolled_at")
     .eq("user_id", studentId)
 
-  const enrolledCourseIds = (enrollments ?? []).map((enrollment) => enrollment.course_id)
+  const enrollmentRows = (enrollments ?? []) as EnrollmentRow[]
+  const enrolledCourseIds = enrollmentRows.map((enrollment) => enrollment.course_id)
+  const enrolledAtByCourseId = Object.fromEntries(
+    enrollmentRows.map((enrollment) => [enrollment.course_id, enrollment.enrolled_at])
+  )
 
   let courses: CourseRow[] = []
 
@@ -77,15 +91,37 @@ export default async function StudentProfilePage({ params }: Props) {
   )
 
   let completedLessonIds = new Set<string>()
+  let progressRows: ProgressRow[] = []
 
   if (allLessonIds.length > 0) {
     const { data: progressRecords } = await supabase
       .from("progress")
-      .select("lesson_id")
+      .select("lesson_id, completed_at")
       .eq("user_id", studentId)
       .in("lesson_id", allLessonIds)
 
-    completedLessonIds = new Set((progressRecords ?? []).map((record) => record.lesson_id))
+    progressRows = (progressRecords ?? []) as ProgressRow[]
+    completedLessonIds = new Set(progressRows.map((record) => record.lesson_id))
+  }
+
+  const lessonIdToCourseId = new Map<string, string>(
+    courses.flatMap((course) =>
+      course.modules.flatMap((courseModule) =>
+        courseModule.lessons.map((lesson) => [lesson.id, course.id])
+      )
+    )
+  )
+
+  const lastCompletedAtByCourseId: Record<string, string> = {}
+  for (const progressRow of progressRows) {
+    const courseId = lessonIdToCourseId.get(progressRow.lesson_id)
+    if (!courseId) {
+      continue
+    }
+    const existing = lastCompletedAtByCourseId[courseId]
+    if (!existing || progressRow.completed_at > existing) {
+      lastCompletedAtByCourseId[courseId] = progressRow.completed_at
+    }
   }
 
   const { data: notesData } = await supabase
@@ -169,6 +205,8 @@ export default async function StudentProfilePage({ params }: Props) {
                 totalLessons={totalLessons}
                 studentId={studentId}
                 initialNotes={notesByCourseId[course.id] ?? []}
+                enrolledAt={enrolledAtByCourseId[course.id] ?? null}
+                lastCompletedAt={lastCompletedAtByCourseId[course.id] ?? null}
               />
             )
           })}

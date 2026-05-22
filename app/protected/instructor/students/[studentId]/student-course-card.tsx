@@ -32,6 +32,8 @@ interface Props {
   totalLessons: number;
   studentId: string;
   initialNotes: StudentNote[];
+  enrolledAt: string | null;
+  lastCompletedAt: string | null;
 }
 
 export function StudentCourseCard({
@@ -42,6 +44,8 @@ export function StudentCourseCard({
   totalLessons,
   studentId,
   initialNotes,
+  enrolledAt,
+  lastCompletedAt,
 }: Props) {
   const locale = useLocale()
   const t = translations[locale]
@@ -77,6 +81,19 @@ export function StudentCourseCard({
             style={{ width: `${percentage}%` }}
           />
         </div>
+
+        <div className="flex gap-4 mt-2">
+          {enrolledAt && (
+            <span className="text-xs text-muted-foreground">
+              {t.enrolledAt}: {new Date(enrolledAt).toLocaleDateString()}
+            </span>
+          )}
+          {lastCompletedAt && (
+            <span className="text-xs text-muted-foreground">
+              {t.lastCompleted}: {new Date(lastCompletedAt).toLocaleDateString()}
+            </span>
+          )}
+        </div>
       </CardHeader>
 
       <CardContent className="pt-0 flex flex-col gap-0">
@@ -91,9 +108,9 @@ export function StudentCourseCard({
                   {courseModule.lessons.map((lesson) => (
                     <div key={lesson.id} className="flex items-center gap-2 text-sm">
                       {lesson.completed ? (
-                        <CheckCircle2 size={15} className="text-primary shrink-0" />
+                        <CheckCircle2 size={16} className="text-primary shrink-0" />
                       ) : (
-                        <Circle size={15} className="text-muted-foreground shrink-0" />
+                        <Circle size={16} className="text-muted-foreground shrink-0" />
                       )}
                       <span className={lesson.completed ? "" : "text-muted-foreground"}>
                         {lesson.title}
