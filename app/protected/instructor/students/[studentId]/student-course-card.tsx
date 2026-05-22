@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, CheckCircle2, Circle } from "lucide-react"
-import { StudentNotesPanel } from "@/app/protected/instructor/courses/[id]/student-notes-panel"
+import { StudentNotesPanel } from "./student-notes-panel"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./student-course-card.i18n"
 import type { StudentNote } from "@/lib/supabase/types"
-import { cn } from "@/lib/utils"
+import { cn, LOCALE_LANGUAGE } from "@/lib/utils"
 
 interface Lesson {
   id: string;
@@ -73,9 +73,11 @@ export function StudentCourseCard({
   lastCompletedAt,
   sessions,
 }: Props) {
+  const [isProgressExpanded, setIsProgressExpanded] = useState(false)
+
   const locale = useLocale()
   const t = translations[locale]
-  const [isProgressExpanded, setIsProgressExpanded] = useState(false)
+  const localeLanguage = LOCALE_LANGUAGE[locale] ?? "en"
 
   const percentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0
 
@@ -124,7 +126,7 @@ export function StudentCourseCard({
               aria-label={isProgressExpanded ? t.hideProgress : t.showProgress}
               onClick={() => setIsProgressExpanded((previous) => !previous)}
             >
-              {isProgressExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {isProgressExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </Button>
           </div>
         </div>
@@ -139,12 +141,12 @@ export function StudentCourseCard({
         <div className="flex gap-4 mt-2">
           {enrolledAt && (
             <span className="text-xs text-muted-foreground">
-              {t.enrolledAt}: {new Date(enrolledAt).toLocaleDateString()}
+              {t.enrolledAt}: {new Date(enrolledAt).toLocaleDateString(localeLanguage)}
             </span>
           )}
           {lastCompletedAt && (
             <span className="text-xs text-muted-foreground">
-              {t.lastCompleted}: {new Date(lastCompletedAt).toLocaleDateString()}
+              {t.lastCompleted}: {new Date(lastCompletedAt).toLocaleDateString(localeLanguage)}
             </span>
           )}
         </div>
@@ -233,7 +235,7 @@ export function StudentCourseCard({
                   <div key={session.id} className="flex items-center justify-between text-sm">
                     <span>{session.title}</span>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(session.scheduled_at).toLocaleDateString()} · {session.duration_min}m
+                      {new Date(session.scheduled_at).toLocaleDateString(localeLanguage)} {new Date(session.scheduled_at).toLocaleTimeString(localeLanguage, { hour: "2-digit", minute: "2-digit" })} · {session.duration_min}m
                     </span>
                   </div>
                 ))}

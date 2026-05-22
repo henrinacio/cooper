@@ -400,7 +400,6 @@ export function StudentNotesPanel({ courseId, studentId, initialNotes, hideViewP
         </div>
       )}
 
-      {/* Delete confirmation dialog */}
       <Dialog open={!!deletingNoteId} onOpenChange={(open) => { if (!open) setDeletingNoteId(null) }}>
         <DialogContent>
           <DialogHeader>
@@ -422,7 +421,6 @@ export function StudentNotesPanel({ courseId, studentId, initialNotes, hideViewP
         </DialogContent>
       </Dialog>
 
-      {/* History dialog */}
       <Dialog open={!!historyDialogNote} onOpenChange={(open) => { if (!open) setHistoryDialogNote(null) }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>

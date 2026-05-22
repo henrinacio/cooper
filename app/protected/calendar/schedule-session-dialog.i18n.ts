@@ -50,7 +50,7 @@ export const translations: Record<
   pt: {
     dialogTitle: "Agendar Aula",
     titleLabel: "Título",
-    titlePlaceholder: "ex. Sessão de Revisão 1 a 1",
+    titlePlaceholder: "ex. Aula de Revisão 1 a 1",
     courseLabel: "Curso",
     selectCourse: "Selecione um curso",
     studentLabel: "Aluno",
@@ -60,7 +60,7 @@ export const translations: Record<
     dateTimeLabel: "Data e Hora",
     durationLabel: "Duração",
     notesLabel: "Notas (opcional)",
-    notesPlaceholder: "Alguma nota para esta sessão...",
+    notesPlaceholder: "Alguma nota para esta aula...",
     scheduleButton: "Agendar",
     scheduledSuccess: "Aula agendada!",
     dur30: "30 minutos",

@@ -58,7 +58,7 @@ export const translations: Record<
   pt: {
     title: "Calendário",
     scheduleClass: "Agendar Aula",
-    noSessions: "Nenhuma sessão agendada.",
+    noSessions: "Nenhuma aula agendada.",
     studentLabel: "Aluno",
     instructorLabel: "Instrutor",
     confirmClass: "Confirmar",
@@ -66,7 +66,7 @@ export const translations: Record<
     deleteSuccess: "Aula deletada.",
     deleteError: "Erro ao deletar a aula.",
     deleteConfirmTitle: "Deletar aula?",
-    deleteConfirmDescription: "A sessão será cancelada e o aluno será notificado.",
+    deleteConfirmDescription: "A aula será cancelada e o aluno será notificado.",
     deleteCancel: "Cancelar",
     deleteConfirm: "Deletar",
     sun: "Dom", mon: "Seg", tue: "Ter", wed: "Qua", thu: "Qui", fri: "Sex", sat: "Sáb",
