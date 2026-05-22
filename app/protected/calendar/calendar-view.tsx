@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Plus, Clock, BookOpen, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Plus, Clock, BookOpen, Trash2, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,6 +19,7 @@ import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supa
 import type { translations as pageTranslations } from "./page.i18n"
 import type { translations as dialogTranslations } from "./schedule-session-dialog.i18n"
 import { useLocale } from "@/components/locale-provider"
+import { Spinner } from "@/components/ui/spinner"
 
 type CalendarTranslations = (typeof pageTranslations)[keyof typeof pageTranslations]
 type DialogTranslations = (typeof dialogTranslations)[keyof typeof dialogTranslations]
@@ -105,8 +106,16 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
           )}
         </div>
         {otherPerson && (
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
             {isPrivileged ? t.studentLabel : t.instructorLabel}: {otherPerson}
+            {isPrivileged && (
+              <a
+                href={`/protected/instructor/students/${session.student_id}`}
+                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ExternalLink size={16} />
+              </a>
+            )}
           </span>
         )}
         {session.notes && (
@@ -151,7 +160,7 @@ function SessionCard({ session, isPrivileged, t }: SessionCardProps) {
                   {t.deleteCancel}
                 </Button>
                 <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-                  {deleting ? "…" : t.deleteConfirm}
+                  {deleting ? <Spinner /> : t.deleteConfirm}
                 </Button>
               </DialogFooter>
             </DialogContent>
