@@ -10,6 +10,7 @@ export const translations: Record<Locale, {
   enrolled: string
   previewMode: string
   viewProgress: string
+  viewAnalytics: string
   viewProfile: string
 }> = {
   en: {
@@ -22,6 +23,7 @@ export const translations: Record<Locale, {
     enrolled: "Enrolled",
     previewMode: "Preview Mode",
     viewProgress: "Progress",
+    viewAnalytics: "Analytics",
     viewProfile: "View Profile",
   },
   pt: {
@@ -34,6 +36,7 @@ export const translations: Record<Locale, {
     enrolled: "Matriculado em",
     previewMode: "Modo Visualização",
     viewProgress: "Progresso",
+    viewAnalytics: "Análises",
     viewProfile: "Ver Perfil",
   },
   es: {
@@ -46,6 +49,7 @@ export const translations: Record<Locale, {
     enrolled: "Matriculado el",
     previewMode: "Modo vista previa",
     viewProgress: "Progreso",
+    viewAnalytics: "Análisis",
     viewProfile: "Ver Perfil",
   },
 }
