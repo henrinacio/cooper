@@ -15,22 +15,22 @@ import { Spinner } from "@/components/ui/spinner"
 import { scheduleSession } from "./actions"
 import { toast } from "sonner"
 import type { CourseWithStudents } from "@/lib/supabase/types"
-import type { translations } from "./schedule-session-dialog.i18n"
-
-type DialogTranslations = (typeof translations)[keyof typeof translations]
+import { translations } from "./schedule-session-dialog.i18n"
+import { useLocale } from "@/components/locale-provider"
 
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
   courses: CourseWithStudents[]
   defaultDate?: string
-  t: DialogTranslations
 }
 
 const selectClass =
   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
 
-export function ScheduleSessionDialog({ open, onOpenChange, courses, defaultDate, t }: Props) {
+export function ScheduleSessionDialog({ open, onOpenChange, courses, defaultDate }: Props) {
+  const locale = useLocale()
+  const t = translations[locale]
   const [courseId, setCourseId] = useState("")
   const [studentId, setStudentId] = useState("")
   const [title, setTitle] = useState("")

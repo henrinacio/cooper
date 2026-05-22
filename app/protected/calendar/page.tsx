@@ -3,7 +3,6 @@ import { redirect } from "next/navigation"
 import { CalendarView } from "./calendar-view"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
-import { translations as dialogTranslations } from "./schedule-session-dialog.i18n"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"
 
 export default async function CalendarPage() {
@@ -43,7 +42,6 @@ export default async function CalendarPage() {
 
   const locale = await getLocale()
   const t = translations[locale]
-  const dialogT = dialogTranslations[locale]
 
   return (
     <div className="flex flex-col gap-6">
@@ -52,8 +50,6 @@ export default async function CalendarPage() {
         sessions={(sessions as unknown as ScheduledSessionWithDetails[]) ?? []}
         role={role}
         courses={courses}
-        t={t}
-        dialogT={dialogT}
       />
     </div>
   )
