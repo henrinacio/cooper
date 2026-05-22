@@ -3,14 +3,28 @@ import { redirect, notFound } from "next/navigation"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 import { BackButton } from "@/components/back-button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { StickyNote, Pin, User } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { User } from "lucide-react"
+import Image from "next/image"
 import type { StudentNote } from "@/lib/supabase/types"
+import { StudentCourseCard } from "./student-course-card"
 
 interface Props {
   params: Promise<{ studentId: string }>;
+}
+
+type CourseRow = {
+  id: string;
+  title: string;
+  modules: {
+    id: string;
+    title: string;
+    order: number;
+    lessons: {
+      id: string;
+      title: string;
+      order: number;
+    }[];
+  }[];
 }
 
 export default async function StudentProfilePage({ params }: Props) {
@@ -35,37 +49,68 @@ export default async function StudentProfilePage({ params }: Props) {
     notFound()
   }
 
-  const { data: notes } = await supabase
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("course_id")
+    .eq("user_id", studentId)
+
+  const enrolledCourseIds = (enrollments ?? []).map((enrollment) => enrollment.course_id)
+
+  let courses: CourseRow[] = []
+
+  if (enrolledCourseIds.length > 0) {
+    const { data: coursesData } = await supabase
+      .from("courses")
+      .select("id, title, modules(id, title, order, lessons(id, title, order))")
+      .eq("instructor_id", instructorId)
+      .in("id", enrolledCourseIds)
+      .order("order", { referencedTable: "modules" })
+      .order("order", { referencedTable: "modules.lessons" })
+
+    courses = (coursesData ?? []) as CourseRow[]
+  }
+
+  const allLessonIds = courses.flatMap((course) =>
+    course.modules.flatMap((courseModule) =>
+      courseModule.lessons.map((lesson) => lesson.id)
+    )
+  )
+
+  let completedLessonIds = new Set<string>()
+
+  if (allLessonIds.length > 0) {
+    const { data: progressRecords } = await supabase
+      .from("progress")
+      .select("lesson_id")
+      .eq("user_id", studentId)
+      .in("lesson_id", allLessonIds)
+
+    completedLessonIds = new Set((progressRecords ?? []).map((record) => record.lesson_id))
+  }
+
+  const { data: notesData } = await supabase
     .from("student_notes")
-    .select("*, courses(id, title)")
+    .select("*")
     .eq("student_id", studentId)
     .eq("instructor_id", instructorId)
     .order("pinned", { ascending: false })
     .order("created_at", { ascending: false })
 
-  const noteList = (notes ?? []) as (StudentNote & { courses: { id: string; title: string } | null })[]
+  const noteList = (notesData ?? []) as StudentNote[]
 
-  const notesByCourseId = noteList.reduce<Record<string, { courseTitle: string; notes: typeof noteList }>>(
+  const notesByCourseId = noteList.reduce<Record<string, StudentNote[]>>(
     (accumulator, note) => {
-      const courseId = note.course_id
-      if (!accumulator[courseId]) {
-        accumulator[courseId] = {
-          courseTitle: note.courses?.title ?? courseId,
-          notes: [],
-        }
+      if (!accumulator[note.course_id]) {
+        accumulator[note.course_id] = []
       }
-      accumulator[courseId].notes.push(note)
+      accumulator[note.course_id].push(note)
       return accumulator
     },
     {}
   )
 
-  const courseGroups = Object.entries(notesByCourseId)
-
   const locale = await getLocale()
   const t = translations[locale]
-
-  const totalNoteCount = noteList.length
 
   return (
     <div className="flex flex-col gap-8">
@@ -76,72 +121,57 @@ export default async function StudentProfilePage({ params }: Props) {
       <div className="flex items-center gap-4">
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-muted shrink-0">
           {student.avatar_url ? (
-            <img
-              width={16}
-              height={16}
+            <Image
+              width={56}
+              height={56}
               src={student.avatar_url}
               alt={student.full_name ?? ""}
-              className="w-16 h-16 rounded-full object-cover"
+              className="w-14 h-14 rounded-full object-cover"
             />
           ) : (
             <User size={32} className="text-muted-foreground" />
           )}
         </div>
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-2xl font-bold">{student.full_name ?? "—"}</h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <StickyNote size={16} />
-            <span>{totalNoteCount} {t.noteCount}{totalNoteCount !== 1 ? "s" : ""}</span>
-          </div>
-        </div>
+        <h1 className="text-2xl font-bold">{student.full_name ?? "—"}</h1>
       </div>
 
-      {courseGroups.length === 0 ? (
-        <p className="text-muted-foreground text-sm">{t.noNotes}</p>
+      {courses.length === 0 ? (
+        <p className="text-muted-foreground text-sm">{t.noEnrollments}</p>
       ) : (
         <div className="flex flex-col gap-6">
-          {courseGroups.map(([courseId, group]) => (
-            <Card key={courseId}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <span>{group.courseTitle}</span>
-                  <Badge variant="secondary" className="text-xs font-normal">
-                    {group.notes.length} {t.noteCount}{group.notes.length !== 1 ? "s" : ""}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-3">
-                {group.notes.map((note) => (
-                  <div
-                    key={note.id}
-                    className={cn(
-                      "flex flex-col gap-2 p-3 rounded-lg border text-sm",
-                      note.pinned && "border-primary/40 bg-primary/5"
-                    )}
-                  >
-                    <p className="leading-relaxed whitespace-pre-wrap">{note.content}</p>
+          {courses.map((course) => {
+            const courseModules = course.modules.map((courseModule) => ({
+              ...courseModule,
+              lessons: courseModule.lessons.map((lesson) => ({
+                ...lesson,
+                completed: completedLessonIds.has(lesson.id),
+              })),
+            }))
 
-                    <div className="flex flex-wrap items-center gap-1">
-                      {note.pinned && (
-                        <Badge variant="outline" className="text-[10px] h-4 px-1 gap-0.5 border-primary/50 text-primary">
-                          <Pin size={8} />
-                          {t.pinnedLabel}
-                        </Badge>
-                      )}
-                      {note.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-[10px] h-4 px-1">
-                          {tag}
-                        </Badge>
-                      ))}
-                      <span className="text-muted-foreground text-[10px] ml-auto">
-                        {t.editedAt} {new Date(note.updated_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          ))}
+            const totalLessons = course.modules.reduce(
+              (sum, courseModule) => sum + courseModule.lessons.length,
+              0
+            )
+            const completedCount = course.modules.reduce(
+              (sum, courseModule) =>
+                sum +
+                courseModule.lessons.filter((lesson) => completedLessonIds.has(lesson.id)).length,
+              0
+            )
+
+            return (
+              <StudentCourseCard
+                key={course.id}
+                courseId={course.id}
+                courseTitle={course.title}
+                modules={courseModules}
+                completedCount={completedCount}
+                totalLessons={totalLessons}
+                studentId={studentId}
+                initialNotes={notesByCourseId[course.id] ?? []}
+              />
+            )
+          })}
         </div>
       )}
     </div>

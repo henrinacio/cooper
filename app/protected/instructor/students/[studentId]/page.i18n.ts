@@ -2,38 +2,22 @@ import type { Locale } from "@/lib/locale"
 
 export const translations: Record<Locale, {
   backLabel: string
-  noNotes: string
   notFound: string
-  enrolledIn: string
-  noteCount: string
-  pinnedLabel: string
-  editedAt: string
+  noEnrollments: string
 }> = {
   en: {
     backLabel: "Back",
-    noNotes: "No notes about this student yet.",
     notFound: "Student not found.",
-    enrolledIn: "Enrolled in",
-    noteCount: "note",
-    pinnedLabel: "Pinned",
-    editedAt: "Updated",
+    noEnrollments: "This student is not enrolled in any of your courses.",
   },
   pt: {
     backLabel: "Voltar",
-    noNotes: "Nenhuma anotação sobre este aluno ainda.",
     notFound: "Aluno não encontrado.",
-    enrolledIn: "Matriculado em",
-    noteCount: "anotação",
-    pinnedLabel: "Fixada",
-    editedAt: "Atualizado",
+    noEnrollments: "Este aluno não está matriculado em nenhum dos seus cursos.",
   },
   es: {
     backLabel: "Volver",
-    noNotes: "Aún no hay notas sobre este estudiante.",
     notFound: "Estudiante no encontrado.",
-    enrolledIn: "Matriculado en",
-    noteCount: "nota",
-    pinnedLabel: "Fijada",
-    editedAt: "Actualizado",
+    noEnrollments: "Este estudiante no está matriculado en ninguno de tus cursos.",
   },
 }

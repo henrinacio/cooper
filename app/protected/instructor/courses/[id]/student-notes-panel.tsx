@@ -143,11 +143,11 @@ function NoteForm({ form, onChange, onSave, onCancel, saving, t }: NoteFormProps
 interface Props {
   courseId: string;
   studentId: string;
-  studentName: string | null;
   initialNotes: StudentNote[];
+  hideViewProfile?: boolean;
 }
 
-export function StudentNotesPanel({ courseId, studentId, studentName, initialNotes }: Props) {
+export function StudentNotesPanel({ courseId, studentId, initialNotes, hideViewProfile }: Props) {
   const locale = useLocale()
   const translationSet = translations[locale]
 
@@ -382,17 +382,19 @@ export function StudentNotesPanel({ courseId, studentId, studentName, initialNot
                 <Plus size={13} />
                 {translationSet.addNote}
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs text-muted-foreground justify-start px-1"
-                asChild
-              >
-                <Link href={`/protected/instructor/students/${studentId}`}>
-                  <ExternalLink size={13} />
-                  {translationSet.viewProfile}
-                </Link>
-              </Button>
+              {!hideViewProfile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs text-muted-foreground justify-start px-1"
+                  asChild
+                >
+                  <Link href={`/protected/instructor/students/${studentId}`}>
+                    <ExternalLink size={13} />
+                    {translationSet.viewProfile}
+                  </Link>
+                </Button>
+              )}
             </div>
           )}
         </div>
