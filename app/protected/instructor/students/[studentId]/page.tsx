@@ -23,6 +23,7 @@ type CourseRow = {
       id: string;
       title: string;
       order: number;
+      duration_s: number | null;
     }[];
   }[];
 }
@@ -35,6 +36,14 @@ type EnrollmentRow = {
 type ProgressRow = {
   lesson_id: string;
   completed_at: string;
+}
+
+type SessionRow = {
+  id: string;
+  course_id: string;
+  title: string;
+  scheduled_at: string;
+  duration_min: number;
 }
 
 export default async function StudentProfilePage({ params }: Props) {
@@ -75,7 +84,7 @@ export default async function StudentProfilePage({ params }: Props) {
   if (enrolledCourseIds.length > 0) {
     const { data: coursesData } = await supabase
       .from("courses")
-      .select("id, title, modules(id, title, order, lessons(id, title, order))")
+      .select("id, title, modules(id, title, order, lessons(id, title, order, duration_s))")
       .eq("instructor_id", instructorId)
       .in("id", enrolledCourseIds)
       .order("order", { referencedTable: "modules" })
@@ -145,8 +154,55 @@ export default async function StudentProfilePage({ params }: Props) {
     {}
   )
 
+  const { data: sessionsData } = await supabase
+    .from("scheduled_sessions")
+    .select("id, course_id, title, scheduled_at, duration_min")
+    .eq("instructor_id", instructorId)
+    .eq("student_id", studentId)
+    .order("scheduled_at", { ascending: true })
+
+  const sessionRows = (sessionsData ?? []) as SessionRow[]
+
+  const sessionsByCourseId = sessionRows.reduce<Record<string, SessionRow[]>>(
+    (accumulator, session) => {
+      if (!accumulator[session.course_id]) {
+        accumulator[session.course_id] = []
+      }
+      accumulator[session.course_id].push(session)
+      return accumulator
+    },
+    {}
+  )
+
+  const totalLessonsAll = allLessonIds.length
+  const totalCompletedAll = completedLessonIds.size
+  const overallPercentage = totalLessonsAll > 0
+    ? Math.round((totalCompletedAll / totalLessonsAll) * 100)
+    : 0
+
+  const lastActiveAt = progressRows.length > 0
+    ? progressRows.reduce(
+        (max, row) => row.completed_at > max ? row.completed_at : max,
+        progressRows[0].completed_at
+      )
+    : null
+
+  const daysInactiveSummary = lastActiveAt
+    ? Math.floor((Date.now() - new Date(lastActiveAt).getTime()) / 86400000)
+    : null
+
   const locale = await getLocale()
   const t = translations[locale]
+
+  const lastActiveLabel = (() => {
+    if (daysInactiveSummary === null) {
+      return t.neverActive
+    }
+    if (daysInactiveSummary === 0) {
+      return t.activeToday
+    }
+    return `${daysInactiveSummary}${t.daysAgo}`
+  })()
 
   return (
     <div className="flex flex-col gap-8">
@@ -174,43 +230,65 @@ export default async function StudentProfilePage({ params }: Props) {
       {courses.length === 0 ? (
         <p className="text-muted-foreground text-sm">{t.noEnrollments}</p>
       ) : (
-        <div className="flex flex-col gap-6">
-          {courses.map((course) => {
-            const courseModules = course.modules.map((courseModule) => ({
-              ...courseModule,
-              lessons: courseModule.lessons.map((lesson) => ({
-                ...lesson,
-                completed: completedLessonIds.has(lesson.id),
-              })),
-            }))
+        <>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm bg-muted/40 rounded-lg px-4 py-3">
+            <span>
+              <strong className="text-foreground font-semibold">{courses.length}</strong>{" "}
+              <span className="text-muted-foreground">{t.courses}</span>
+            </span>
+            <span>
+              <strong className="text-foreground font-semibold">{totalCompletedAll}/{totalLessonsAll}</strong>{" "}
+              <span className="text-muted-foreground">{t.lessons}</span>
+            </span>
+            <span>
+              <strong className="text-foreground font-semibold">{overallPercentage}%</strong>{" "}
+              <span className="text-muted-foreground">{t.overall}</span>
+            </span>
+            <span>
+              <span className="text-muted-foreground">{t.lastActive}:</span>{" "}
+              <strong className="text-foreground font-semibold">{lastActiveLabel}</strong>
+            </span>
+          </div>
 
-            const totalLessons = course.modules.reduce(
-              (sum, courseModule) => sum + courseModule.lessons.length,
-              0
-            )
-            const completedCount = course.modules.reduce(
-              (sum, courseModule) =>
-                sum +
-                courseModule.lessons.filter((lesson) => completedLessonIds.has(lesson.id)).length,
-              0
-            )
+          <div className="flex flex-col gap-6">
+            {courses.map((course) => {
+              const courseModules = course.modules.map((courseModule) => ({
+                ...courseModule,
+                lessons: courseModule.lessons.map((lesson) => ({
+                  ...lesson,
+                  completed: completedLessonIds.has(lesson.id),
+                })),
+              }))
 
-            return (
-              <StudentCourseCard
-                key={course.id}
-                courseId={course.id}
-                courseTitle={course.title}
-                modules={courseModules}
-                completedCount={completedCount}
-                totalLessons={totalLessons}
-                studentId={studentId}
-                initialNotes={notesByCourseId[course.id] ?? []}
-                enrolledAt={enrolledAtByCourseId[course.id] ?? null}
-                lastCompletedAt={lastCompletedAtByCourseId[course.id] ?? null}
-              />
-            )
-          })}
-        </div>
+              const totalLessons = course.modules.reduce(
+                (sum, courseModule) => sum + courseModule.lessons.length,
+                0
+              )
+              const completedCount = course.modules.reduce(
+                (sum, courseModule) =>
+                  sum +
+                  courseModule.lessons.filter((lesson) => completedLessonIds.has(lesson.id)).length,
+                0
+              )
+
+              return (
+                <StudentCourseCard
+                  key={course.id}
+                  courseId={course.id}
+                  courseTitle={course.title}
+                  modules={courseModules}
+                  completedCount={completedCount}
+                  totalLessons={totalLessons}
+                  studentId={studentId}
+                  initialNotes={notesByCourseId[course.id] ?? []}
+                  enrolledAt={enrolledAtByCourseId[course.id] ?? null}
+                  lastCompletedAt={lastCompletedAtByCourseId[course.id] ?? null}
+                  sessions={sessionsByCourseId[course.id] ?? []}
+                />
+              )
+            })}
+          </div>
+        </>
       )}
     </div>
   )
