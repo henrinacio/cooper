@@ -5,11 +5,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BookOpen, Users, Pencil, PlusCircle, BarChart2, TrendingUp } from "lucide-react"
+import { BookOpen, Users, Pencil, PlusCircle, TrendingUp } from "lucide-react"
 import { BackButton } from "@/components/back-button"
 import { PublishToggle } from "./publish-toggle"
-import { AddStudentForm } from "./add-student-form"
-import { RemoveStudentButton } from "./remove-student-button"
 import { AddModuleForm } from "./add-module-form"
 import { DeleteModuleButton } from "./delete-module-button"
 import { DeleteLessonButton } from "./delete-lesson-button"
@@ -18,8 +16,6 @@ import { EditCourseHeader } from "./edit-course-header"
 import { DeleteCourseButton } from "./delete-course-button"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
-
-type EnrollmentProfile = { id: string; full_name: string | null };
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -48,11 +44,10 @@ export default async function EditCoursePage({ params }: Props) {
     notFound()
   }
 
-  const { data: enrollments } = await supabase
+  const { count: enrollmentCount } = await supabase
     .from("enrollments")
-    .select("id, user_id, enrolled_at, profiles(id, full_name)")
+    .select("id", { count: "exact", head: true })
     .eq("course_id", id)
-    .order("enrolled_at", { ascending: false })
 
   const locale = await getLocale()
   const t = translations[locale]
@@ -71,6 +66,33 @@ export default async function EditCoursePage({ params }: Props) {
       </div>
 
       <EditCourseHeader courseId={course.id} title={course.title} description={course.description} />
+
+      <div className="flex gap-4">
+        <Link href={`/protected/instructor/courses/${id}/students`} className="block flex-1">
+          <Card className="hover:bg-accent transition-colors cursor-pointer">
+            <CardContent className="flex items-center justify-between py-4">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Users size={16} />
+                {t.students}
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {enrollmentCount ?? 0}
+              </Badge>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href={`/protected/instructor/courses/${id}/analytics`} className="block flex-1">
+          <Card className="hover:bg-accent transition-colors cursor-pointer">
+            <CardContent className="flex items-center justify-between py-4">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <TrendingUp size={16} />
+                {t.viewAnalytics}
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -128,72 +150,6 @@ export default async function EditCoursePage({ params }: Props) {
               </CardContent>
             </Card>
           ))
-        )}
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users size={24} />
-            <h2 className="text-xl font-semibold">
-              {t.students}
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
-                ({enrollments?.length ?? 0})
-              </span>
-            </h2>
-          </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/protected/instructor/courses/${id}/progress`}>
-                <BarChart2 size={16} />
-                {t.viewProgress}
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/protected/instructor/courses/${id}/analytics`}>
-                <TrendingUp size={16} />
-                {t.viewAnalytics}
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        <AddStudentForm courseId={course.id} />
-
-        {!!enrollments?.length && (
-          <div className="flex flex-col gap-1 mt-2">
-            {enrollments.map((enrollment) => {
-              const studentFullName = (enrollment.profiles as unknown as EnrollmentProfile)?.full_name
-              return (
-                <div
-                  key={enrollment.id}
-                  className="flex text-sm px-3 py-2 rounded border"
-                >
-                  <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {studentFullName ?? "—"}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {t.enrolled} {new Date(enrollment.enrolled_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <RemoveStudentButton
-                        courseId={course.id}
-                        enrollmentId={enrollment.id}
-                      />
-                    </div>
-                    <Button asChild variant="outline" size="sm" className="self-start">
-                      <Link href={`/protected/instructor/students/${enrollment.user_id}`}>
-                        {t.viewProfile}
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
         )}
       </div>
     </div>
