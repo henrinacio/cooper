@@ -2,9 +2,10 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
 import { CourseWithModules } from "@/lib/supabase/types"
 import { BackButton } from "@/components/back-button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, Circle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 
@@ -12,6 +13,12 @@ type EnrollmentProfile = { id: string; full_name: string | null }
 
 interface Props {
   params: Promise<{ id: string }>
+}
+
+const LOCALE_LANGUAGE: Record<string, string> = {
+  en: "en",
+  pt: "pt-BR",
+  es: "es",
 }
 
 export default async function CourseProgressPage({ params }: Props) {
@@ -61,6 +68,8 @@ export default async function CourseProgressPage({ params }: Props) {
   const locale = await getLocale()
   const t = translations[locale]
 
+  const localeLanguage = LOCALE_LANGUAGE[locale] ?? "en"
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
@@ -81,7 +90,6 @@ export default async function CourseProgressPage({ params }: Props) {
             const studentProgress = progressRecords.filter(
               (progress) => progress.user_id === enrollment.user_id
             )
-            const completedIds = new Set(studentProgress.map((p) => p.lesson_id))
             const completedCount = studentProgress.length
             const percentage =
               totalLessons > 0
@@ -107,6 +115,11 @@ export default async function CourseProgressPage({ params }: Props) {
                       <span className="text-sm font-medium text-muted-foreground">
                         {percentage}%
                       </span>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/protected/instructor/students/${enrollment.user_id}`}>
+                          {t.viewProfile}
+                        </Link>
+                      </Button>
                     </div>
                   </div>
 
@@ -120,60 +133,11 @@ export default async function CourseProgressPage({ params }: Props) {
                   {lastActivityTs && (
                     <p className="text-xs text-muted-foreground mt-1">
                       {t.lastActivity}:{" "}
-                      {new Date(lastActivityTs).toLocaleDateString()}
+                      {new Date(lastActivityTs).toLocaleDateString(localeLanguage)}
                     </p>
                   )}
                 </CardHeader>
 
-                <CardContent className="flex flex-col gap-4 pt-0">
-                  {course.modules.map((module) => {
-                    const completedInModule = module.lessons.filter((lesson) =>
-                      completedIds.has(lesson.id)
-                    ).length
-
-                    return (
-                      <div key={module.id}>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                            {module.title}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {completedInModule}/{module.lessons.length}
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-0.5">
-                          {module.lessons.map((lesson) => (
-                            <div
-                              key={lesson.id}
-                              className="flex items-center gap-2 text-sm py-0.5"
-                            >
-                              {completedIds.has(lesson.id) ? (
-                                <CheckCircle2
-                                  size={16}
-                                  className="text-green-500 shrink-0"
-                                />
-                              ) : (
-                                <Circle
-                                  size={16}
-                                  className="text-muted-foreground/40 shrink-0"
-                                />
-                              )}
-                              <span
-                                className={
-                                  completedIds.has(lesson.id)
-                                    ? ""
-                                    : "text-muted-foreground"
-                                }
-                              >
-                                {lesson.title}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </CardContent>
               </Card>
             )
           })}
