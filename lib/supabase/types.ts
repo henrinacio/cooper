@@ -115,3 +115,29 @@ export type CourseWithModules = Course & {
 export type CourseWithModulesAndInstructor = CourseWithModules & {
   profiles: Pick<Profile, "id" | "full_name" | "avatar_url"> | null;
 };
+
+export type NoteTag = "academic" | "attendance" | "behavior" | "personal" | "milestone";
+
+export interface StudentNote {
+  id: string;
+  instructor_id: string;
+  student_id: string;
+  course_id: string;
+  content: string;
+  tags: string[];
+  pinned: boolean;
+  session_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StudentNoteHistory {
+  id: string;
+  note_id: string;
+  content: string;
+  edited_at: string;
+}
+
+export type StudentNoteWithCourse = StudentNote & {
+  courses: Pick<Course, "id" | "title"> | null;
+};

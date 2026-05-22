@@ -54,8 +54,6 @@ function formatMetadata(type: string, metadata: Record<string, unknown>, typeLab
     }
   }
 
-
-
   return typeLabels[type as NotificationType] ?? typeLabels.unknown
 }
 

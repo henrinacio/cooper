@@ -18,6 +18,8 @@ import { EditCourseHeader } from "./edit-course-header"
 import { DeleteCourseButton } from "./delete-course-button"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
+import { StudentNotesPanel } from "./student-notes-panel"
+import type { StudentNote } from "@/lib/supabase/types"
 
 type EnrollmentProfile = { id: string; full_name: string | null };
 
@@ -53,6 +55,23 @@ export default async function EditCoursePage({ params }: Props) {
     .select("id, user_id, enrolled_at, profiles(id, full_name)")
     .eq("course_id", id)
     .order("enrolled_at", { ascending: false })
+
+  const { data: studentNotes } = await supabase
+    .from("student_notes")
+    .select("*")
+    .eq("course_id", id)
+    .eq("instructor_id", data.claims.sub as string)
+    .order("pinned", { ascending: false })
+    .order("created_at", { ascending: false })
+
+  const notesByStudentId = (studentNotes ?? []).reduce<Record<string, StudentNote[]>>(
+    (accumulator, note) => {
+      const studentNoteList = accumulator[note.student_id] ?? []
+      accumulator[note.student_id] = [...studentNoteList, note as StudentNote]
+      return accumulator
+    },
+    {}
+  )
 
   const locale = await getLocale()
   const t = translations[locale]
@@ -159,20 +178,30 @@ export default async function EditCoursePage({ params }: Props) {
               return (
                 <div
                   key={enrollment.id}
-                  className="flex items-center justify-between text-sm px-3 py-2 rounded border"
+                  className="flex text-sm px-3 py-2 rounded border"
                 >
-                  <div className="flex flex-col">
-                    <span className="font-medium">
-                      {studentFullName ?? "—"}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {t.enrolled} {new Date(enrollment.enrolled_at).toLocaleDateString()}
-                    </span>
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {studentFullName ?? "—"}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {t.enrolled} {new Date(enrollment.enrolled_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <RemoveStudentButton
+                        courseId={course.id}
+                        enrollmentId={enrollment.id}
+                      />
+                    </div>
+                    <StudentNotesPanel
+                      courseId={course.id}
+                      studentId={(enrollment.profiles as unknown as EnrollmentProfile)?.id ?? ""}
+                      studentName={studentFullName ?? null}
+                      initialNotes={notesByStudentId[(enrollment.profiles as unknown as EnrollmentProfile)?.id] ?? []}
+                    />
                   </div>
-                  <RemoveStudentButton
-                    courseId={course.id}
-                    enrollmentId={enrollment.id}
-                  />
                 </div>
               )
             })}
