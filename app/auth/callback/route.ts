@@ -16,8 +16,18 @@ export async function GET(request: NextRequest) {
         .eq("id", data.user.id)
         .single()
 
-      if (["instructor", "admin"].includes(profile?.role)) {
-        redirect("/protected/instructor/courses")
+      const roleRedirectMap: Record<string, string> = {
+        instructor: "/protected/instructor/courses",
+        student: "/protected/dashboard",
+        admin: "/protected/admin",
+      }
+
+      if (profile) {
+        const redirectPath = roleRedirectMap[profile.role]
+
+        if (redirectPath) {
+          redirect(redirectPath)
+        }
       }
 
       redirect("/protected/dashboard")

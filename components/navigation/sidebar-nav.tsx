@@ -17,9 +17,9 @@ export default function SidebarNav({ role, unreadCount = 0 }: { role: string | n
       <div className="px-3 mb-6 font-semibold text-lg tracking-tight">
         Cooper
       </div>
-      {NAV_ITEMS.map(({ href, label, icon: Icon, showBadge }) => {
+      {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || pathname.startsWith(href + "/")
-        const badgeCount = showBadge ? unreadCount : 0
+        const badgeCount = href === "/protected/notifications" ? unreadCount : 0
         return (
           <Link
             key={href}

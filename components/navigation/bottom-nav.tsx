@@ -15,9 +15,9 @@ export default function BottomNav({ role, unreadCount = 0 }: { role: string | nu
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border bg-background">
       <div className="flex h-full items-center justify-around">
-        {NAV_ITEMS.map(({ href, label, icon: Icon, showBadge }) => {
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + "/")
-          const badgeCount = showBadge ? unreadCount : 0
+          const badgeCount = href === "/protected/notifications" ? unreadCount : 0
           return (
             <Link
               key={href}
