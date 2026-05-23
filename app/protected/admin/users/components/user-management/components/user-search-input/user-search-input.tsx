@@ -11,6 +11,11 @@ export function UserSearchInput() {
   const initialQuery = searchParams.get("search") ?? ""
   const [query, setQuery] = useState(initialQuery)
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const searchParamsRef = useRef(searchParams)
+
+  useEffect(() => {
+    searchParamsRef.current = searchParams
+  }, [searchParams])
 
   useEffect(() => {
     if (debounceTimer.current) {
@@ -18,7 +23,7 @@ export function UserSearchInput() {
     }
 
     debounceTimer.current = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString())
+      const params = new URLSearchParams(searchParamsRef.current.toString())
 
       if (query.trim()) {
         params.set("search", query.trim())
@@ -34,7 +39,7 @@ export function UserSearchInput() {
         clearTimeout(debounceTimer.current)
       }
     }
-  }, [query, router, searchParams])
+  }, [query, router])
 
   return (
     <div className="relative">

@@ -50,7 +50,7 @@ export async function updateUserRole(
     return { error: error.message }
   }
 
-  revalidatePath("/protected/admin")
+  revalidatePath("/protected/admin/users")
   return {}
 }
 
@@ -74,7 +74,7 @@ export async function deactivateUser(
     return { error: error.message }
   }
 
-  revalidatePath("/protected/admin")
+  revalidatePath("/protected/admin/users")
   return {}
 }
 
@@ -97,6 +97,6 @@ export async function reactivateUser(
     return { error: error.message }
   }
 
-  revalidatePath("/protected/admin")
+  revalidatePath("/protected/admin/users")
   return {}
 }
