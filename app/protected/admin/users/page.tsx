@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { Spinner } from "@/components/ui/spinner"
 import { UserManagement } from "./components/user-management/user-management"
+import { BackButton } from "@/components/back-button"
 
 export const metadata = { title: "User Management | Admin" }
 
@@ -39,6 +40,8 @@ export default async function AdminUsersPage({
 
   return (
     <div className="flex flex-col gap-8">
+      <BackButton href={'/protected/admin'} />
+
       <div>
         <h1 className="text-3xl font-bold">User Management</h1>
         <p className="text-muted-foreground mt-1">
