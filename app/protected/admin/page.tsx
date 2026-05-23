@@ -12,7 +12,8 @@ import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Users, BookOpen, Activity, BarChart2 } from "lucide-react"
 import { UserRoleSelect } from "./components/user-role-select/user-role-select"
-import { DeactivateButton } from "./deactivate-button"
+import { DeactivateButton } from "./components/deactivate-button/deactivate-button"
+import { UserSearchInput } from "./components/user-search-input/user-search-input"
 
 export const metadata = { title: "Admin" }
 
@@ -152,7 +153,7 @@ async function Analytics() {
   )
 }
 
-async function UserManagement() {
+async function UserManagement({ searchQuery }: { searchQuery: string }) {
   const adminClient = createAdminClient()
 
   const [profilesResult, authUsersResult] = await Promise.all([
@@ -167,11 +168,28 @@ async function UserManagement() {
     authUsersResult.data.users.map((authUser) => [authUser.id, authUser]),
   )
 
+  const normalizedQuery = searchQuery.toLowerCase().trim()
+
+  const allProfiles = profilesResult.data ?? []
+
+  const filteredProfiles = normalizedQuery
+    ? allProfiles.filter((profile) => {
+        const authUser = authUserMap.get(profile.id)
+        const nameMatches = profile.full_name?.toLowerCase().includes(normalizedQuery)
+        const emailMatches = authUser?.email?.toLowerCase().includes(normalizedQuery)
+        return nameMatches || emailMatches
+      })
+    : allProfiles
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-3">User Management</h2>
-      <div className="flex flex-col gap-2">
-        {(profilesResult.data ?? []).map((profile) => {
+      <UserSearchInput />
+      <div className="flex flex-col gap-2 mt-3">
+        {filteredProfiles.length === 0 && (
+          <p className="text-muted-foreground text-sm">No users found.</p>
+        )}
+        {filteredProfiles.map((profile) => {
           const authUser = authUserMap.get(profile.id)
           const email = authUser?.email ?? "—"
           const isBanned = !!authUser?.banned_until
@@ -205,8 +223,15 @@ async function UserManagement() {
   )
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>
+}) {
   await assertAdmin()
+
+  const resolvedSearchParams = await searchParams
+  const searchQuery = resolvedSearchParams.search ?? ""
 
   return (
     <div className="flex flex-col gap-8">
@@ -222,7 +247,7 @@ export default async function AdminPage() {
       </Suspense>
 
       <Suspense fallback={<Spinner />}>
-        <UserManagement />
+        <UserManagement searchQuery={searchQuery} />
       </Suspense>
     </div>
   )
