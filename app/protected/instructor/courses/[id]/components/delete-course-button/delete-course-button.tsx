@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { deleteCourse } from "./actions"
+import { deleteCourse } from "../../actions"
 import { Trash2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./delete-course-button.i18n"

@@ -3,7 +3,7 @@
 import { useTransition } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { deactivateUser, reactivateUser } from "./actions"
+import { deactivateUser, reactivateUser } from "../../actions"
 
 interface DeactivateButtonProps {
   userId: string

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { BackButton } from "@/components/back-button"
-import { NewCourseForm } from "./new-course-form"
+import { NewCourseForm } from "./components/new-course-form/new-course-form"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 

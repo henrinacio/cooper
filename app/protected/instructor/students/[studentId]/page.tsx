@@ -6,7 +6,7 @@ import { BackButton } from "@/components/back-button"
 import { User } from "lucide-react"
 import Image from "next/image"
 import type { StudentNote } from "@/lib/supabase/types"
-import { StudentCourseCard } from "./student-course-card"
+import { StudentCourseCard } from "./components/student-course-card/student-course-card"
 
 interface Props {
   params: Promise<{ studentId: string }>;

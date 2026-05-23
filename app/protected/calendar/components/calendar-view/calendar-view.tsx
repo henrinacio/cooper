@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ScheduleSessionDialog } from "./schedule-session-dialog"
+import { ScheduleSessionDialog } from "./components/schedule-session-dialog/schedule-session-dialog"
 import { cn, LOCALE_LANGUAGE } from "@/lib/utils"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"
 import { translations } from "./calendar-view.i18n"
 import { useLocale } from "@/components/locale-provider"
-import { SessionCard } from "./session-card"
+import { SessionCard } from "./components/session-card/session-card"
 
 function toLocalDateStr(isoString: string): string {
   const date = new Date(isoString)

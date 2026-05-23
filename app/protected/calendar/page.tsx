@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { CalendarView } from "./calendar-view"
+import { CalendarView } from "./components/calendar-view/calendar-view"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 import type { ScheduledSessionWithDetails, CourseWithStudents } from "@/lib/supabase/types"

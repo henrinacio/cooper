@@ -54,6 +54,7 @@ export async function updateUserRole(
   return {}
 }
 
+
 export async function deactivateUser(
   targetUserId: string,
 ): Promise<{ error?: string }> {

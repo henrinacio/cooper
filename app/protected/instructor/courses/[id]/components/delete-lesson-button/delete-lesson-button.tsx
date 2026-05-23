@@ -10,18 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { deleteModule } from "./actions"
+import { deleteLesson } from "../../actions"
 import { Trash2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
-import { translations } from "./delete-module-button.i18n"
+import { translations } from "./delete-lesson-button.i18n"
 import { toast } from "sonner"
 
 interface Props {
   courseId: string;
-  moduleId: string;
+  lessonId: string;
 }
 
-export function DeleteModuleButton({ courseId, moduleId }: Props) {
+export function DeleteLessonButton({ courseId, lessonId }: Props) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -30,7 +30,7 @@ export function DeleteModuleButton({ courseId, moduleId }: Props) {
 
   async function remove() {
     setLoading(true)
-    const result = await deleteModule(courseId, moduleId)
+    const result = await deleteLesson(courseId, lessonId)
     setLoading(false)
     if (result.error) {
       toast.error(result.error)

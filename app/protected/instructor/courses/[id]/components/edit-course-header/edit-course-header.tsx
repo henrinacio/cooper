@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { updateCourse } from "./actions"
+import { updateCourse } from "../../actions"
 import { Pencil, Check, X } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./edit-course-header.i18n"

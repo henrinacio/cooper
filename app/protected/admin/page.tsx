@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Users, BookOpen, Activity, BarChart2 } from "lucide-react"
-import { UserRoleSelect } from "./user-role-select"
+import { UserRoleSelect } from "./components/user-role-select/user-role-select"
 import { DeactivateButton } from "./deactivate-button"
 
 export const metadata = { title: "Admin" }

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, Undo2 } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./complete-button.i18n"
-import { markLessonComplete, markLessonIncomplete } from "./actions"
+import { markLessonComplete, markLessonIncomplete } from "../../actions"
 import { toast } from "sonner"
 
 interface Props {

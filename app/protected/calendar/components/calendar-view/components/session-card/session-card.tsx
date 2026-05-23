@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
-import { deleteSession, confirmSession } from "./actions"
+import { deleteSession, confirmSession } from "../../actions"
 import { cn, LOCALE_LANGUAGE } from "@/lib/utils"
 import { toast } from "sonner"
 import type { ScheduledSessionWithDetails } from "@/lib/supabase/types"
