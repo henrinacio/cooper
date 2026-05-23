@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { removeStudentFromCourse } from "../actions"
+import { removeStudentFromCourse } from "../../../actions"
 import { X } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./remove-student-button.i18n"

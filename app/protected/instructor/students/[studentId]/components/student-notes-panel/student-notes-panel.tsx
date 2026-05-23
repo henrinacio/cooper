@@ -28,7 +28,7 @@ import {
   updateStudentNote,
   deleteStudentNote,
   getStudentNoteHistory,
-} from "./actions"
+} from "../../actions"
 import { toast } from "sonner"
 import type { StudentNote } from "@/lib/supabase/types"
 import { useLocale } from "@/components/locale-provider"

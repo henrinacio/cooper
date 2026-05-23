@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { renameModule } from "./actions"
+import { renameModule } from "../../actions"
 import { Pencil, Check, X } from "lucide-react"
 import { useLocale } from "@/components/locale-provider"
 import { translations } from "./rename-module-button.i18n"
