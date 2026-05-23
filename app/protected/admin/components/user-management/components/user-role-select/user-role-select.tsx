@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { toast } from "sonner"
-import { updateUserRole } from "../../actions"
+import { updateUserRole } from "../../../../actions"
 
 type UserRole = "student" | "instructor" | "admin"
 
