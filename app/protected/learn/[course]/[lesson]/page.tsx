@@ -44,9 +44,9 @@ export default async function LessonPage({ params }: Props) {
 
   if (!course) notFound()
 
-  const isPrivileged = profile?.role === "admin" || (profile?.role === "instructor" && course.instructor_id === userId)
+  const isIstructor = profile?.role === "instructor" && course.instructor_id === userId
 
-  if (!isPrivileged) {
+  if (!isIstructor) {
     const { data: enrollment } = await supabase
       .from("enrollments")
       .select("id")
@@ -130,7 +130,7 @@ export default async function LessonPage({ params }: Props) {
           </Link>
         </Button>
 
-        {isPrivileged && (
+        {isIstructor && (
           <div>
             <Badge variant="outline" className="text-xs">
               {t.previewMode}
@@ -180,7 +180,7 @@ export default async function LessonPage({ params }: Props) {
           prevLessonId={prevLesson?.id}
           courseSlug={courseSlug}
           completed={completedIds.has(lessonId)}
-          isPrivileged={isPrivileged}
+          isIstructor={isIstructor}
         />
       </div>
     </div>

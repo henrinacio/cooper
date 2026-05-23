@@ -17,10 +17,10 @@ interface Props {
   prevLessonId?: string;
   courseSlug: string;
   completed: boolean;
-  isPrivileged: boolean;
+  isIstructor: boolean;
 }
 
-export function CompleteButton({ lessonId, courseId, instructorId, nextLessonId, prevLessonId, courseSlug, completed, isPrivileged }: Props) {
+export function CompleteButton({ lessonId, courseId, instructorId, nextLessonId, prevLessonId, courseSlug, completed, isIstructor }: Props) {
   const [done, setDone] = useState(completed)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -49,7 +49,7 @@ export function CompleteButton({ lessonId, courseId, instructorId, nextLessonId,
 
   return (
     <div className="flex gap-3">
-      {!isPrivileged && (
+      {!isIstructor && (
         <Button
           onClick={markComplete}
           disabled={done || loading}

@@ -92,7 +92,7 @@ export function CalendarView({ sessions, role, courses }: Props) {
   }
 
   const selectedSessions = selectedDate ? (sessionsByDate[selectedDate] ?? []) : []
-  const isPrivileged = role === "instructor" || role === "admin"
+  const isIstructor = role === "instructor"
 
   return (
     <div className="flex flex-col gap-6">
@@ -108,7 +108,7 @@ export function CalendarView({ sessions, role, courses }: Props) {
             <ChevronRight size={16} />
           </Button>
         </div>
-        {isPrivileged && courses.length > 0 && (
+        {isIstructor && courses.length > 0 && (
           <Button size="sm" onClick={() => setDialogOpen(true)}>
             <Plus size={16} />
             {t.scheduleClass}
@@ -175,14 +175,14 @@ export function CalendarView({ sessions, role, courses }: Props) {
               <SessionCard
                 key={selectedSession.id}
                 session={selectedSession}
-                isPrivileged={isPrivileged}
+                isIstructor={isIstructor}
               />
             ))
           )}
         </div>
       )}
 
-      {isPrivileged && (
+      {isIstructor && (
         <ScheduleSessionDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}

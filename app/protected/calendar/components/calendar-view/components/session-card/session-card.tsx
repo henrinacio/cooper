@@ -21,10 +21,10 @@ import { useLocale } from "@/components/locale-provider"
 
 interface Props {
   session: ScheduledSessionWithDetails
-  isPrivileged: boolean
+  isIstructor: boolean
 }
 
-export function SessionCard({ session, isPrivileged }: Props) {
+export function SessionCard({ session, isIstructor }: Props) {
   const [deleting, setDeleting] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [confirmed, setConfirmed] = useState(session.confirmed)
@@ -39,7 +39,7 @@ export function SessionCard({ session, isPrivileged }: Props) {
     minute: "2-digit",
   })
 
-  const otherPerson = isPrivileged
+  const otherPerson = isIstructor
     ? session.student?.full_name
     : session.instructor?.full_name
 
@@ -82,8 +82,8 @@ export function SessionCard({ session, isPrivileged }: Props) {
         </div>
         {otherPerson && (
           <span className="text-xs text-muted-foreground flex items-center gap-1">
-            {isPrivileged ? t.studentLabel : t.instructorLabel}: {otherPerson}
-            {isPrivileged && (
+            {isIstructor ? t.studentLabel : t.instructorLabel}: {otherPerson}
+            {isIstructor && (
               <a
                 href={`/protected/instructor/students/${session.student_id}`}
                 className={cn("inline-flex items-center text-muted-foreground hover:text-foreground transition-colors")}
@@ -96,7 +96,7 @@ export function SessionCard({ session, isPrivileged }: Props) {
         {session.notes && (
           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{session.notes}</p>
         )}
-        {!isPrivileged && (
+        {!isIstructor && (
           confirmed ? (
             <span className="text-xs text-muted-foreground mt-1">{t.confirmed}</span>
           ) : (
@@ -112,7 +112,7 @@ export function SessionCard({ session, isPrivileged }: Props) {
           )
         )}
       </div>
-      {isPrivileged && (
+      {isIstructor && (
         <>
           <Button
             variant="ghost"
