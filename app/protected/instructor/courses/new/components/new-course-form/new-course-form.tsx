@@ -29,6 +29,8 @@ export function NewCourseForm() {
     const published = form.get("published") === "on"
 
     const slug = title
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
