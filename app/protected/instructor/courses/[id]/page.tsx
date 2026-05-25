@@ -14,6 +14,7 @@ import { DeleteLessonButton } from "./components/delete-lesson-button/delete-les
 import { RenameModuleButton } from "./components/rename-module-button/rename-module-button"
 import { EditCourseHeader } from "./components/edit-course-header/edit-course-header"
 import { DeleteCourseButton } from "./components/delete-course-button/delete-course-button"
+import { ExportCourseButton } from "./components/export-course-button/export-course-button"
 import { getLocale } from "@/lib/locale"
 import { translations } from "./page.i18n"
 
@@ -60,6 +61,7 @@ export default async function EditCoursePage({ params }: Props) {
           <Button asChild variant="outline" size="sm">
             <Link href={`/protected/courses/${course.slug}`}>{t.preview}</Link>
           </Button>
+          <ExportCourseButton courseId={course.id} />
           <PublishToggle courseId={course.id} published={course.published} />
           <DeleteCourseButton courseId={course.id} />
         </div>
