@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
@@ -12,7 +13,13 @@ interface Props {
   searchParams: Promise<{ moduleId?: string }>;
 }
 
-export default async function NewLessonPage({ params, searchParams }: Props) {
+async function NewLessonContent({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ moduleId?: string }>;
+}) {
   const { id } = await params
   const { moduleId } = await searchParams
 
@@ -52,5 +59,13 @@ export default async function NewLessonPage({ params, searchParams }: Props) {
 
       <LessonForm courseId={id} moduleId={moduleId} />
     </div>
+  )
+}
+
+export default function NewLessonPage({ params, searchParams }: Props) {
+  return (
+    <Suspense>
+      <NewLessonContent params={params} searchParams={searchParams} />
+    </Suspense>
   )
 }
