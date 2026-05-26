@@ -11,6 +11,7 @@ import { useLocale } from "@/components/locale-provider"
 import { translations } from "./lesson-form.i18n"
 import { toast } from "sonner"
 import { Plus, Trash2 } from "lucide-react"
+import { MarkdownEditor } from "@/components/markdown-editor"
 
 interface QuizOption {
   text: string
@@ -290,13 +291,11 @@ export function LessonForm({ courseId, moduleId, lesson }: Props) {
       {type === "text" && (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="content">{t.content}</Label>
-          <textarea
-            id="content"
+          <MarkdownEditor
             name="content"
-            rows={10}
             defaultValue={lesson?.content ?? ""}
             placeholder={t.textPlaceholder}
-            className="flex min-h-[160px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y font-mono"
+            rows={10}
           />
         </div>
       )}
