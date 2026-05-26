@@ -23,6 +23,8 @@ async function NewLessonContent({
   const { id } = await params
   const { moduleId } = await searchParams
 
+  console.log(moduleId)
+
   if (!moduleId) notFound()
 
   const supabase = await createClient()

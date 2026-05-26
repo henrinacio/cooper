@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState, useCallback } from "react"
+import { MarkdownContent } from "@/components/markdown-content"
 import {
   Bold,
   Italic,
@@ -16,6 +17,8 @@ import {
   Minus,
 } from "lucide-react"
 
+type Tab = "edit" | "preview"
+
 interface ToolbarButton {
   icon: React.ReactNode
   title: string
@@ -24,42 +27,42 @@ interface ToolbarButton {
 
 const TOOLBAR_BUTTONS: ToolbarButton[] = [
   {
-    icon: <Bold size={14} />,
+    icon: <Bold size={16} />,
     title: "Bold",
     action: (selected) => ({ before: "**", after: "**", defaultText: selected || "bold text" }),
   },
   {
-    icon: <Italic size={14} />,
+    icon: <Italic size={16} />,
     title: "Italic",
     action: (selected) => ({ before: "*", after: "*", defaultText: selected || "italic text" }),
   },
   {
-    icon: <Strikethrough size={14} />,
+    icon: <Strikethrough size={16} />,
     title: "Strikethrough",
     action: (selected) => ({ before: "~~", after: "~~", defaultText: selected || "strikethrough text" }),
   },
   {
-    icon: <Heading1 size={14} />,
+    icon: <Heading1 size={16} />,
     title: "Heading 1",
     action: (selected) => ({ before: "# ", after: "", defaultText: selected || "Heading 1" }),
   },
   {
-    icon: <Heading2 size={14} />,
+    icon: <Heading2 size={16} />,
     title: "Heading 2",
     action: (selected) => ({ before: "## ", after: "", defaultText: selected || "Heading 2" }),
   },
   {
-    icon: <Heading3 size={14} />,
+    icon: <Heading3 size={16} />,
     title: "Heading 3",
     action: (selected) => ({ before: "### ", after: "", defaultText: selected || "Heading 3" }),
   },
   {
-    icon: <Code size={14} />,
+    icon: <Code size={16} />,
     title: "Inline Code",
     action: (selected) => ({ before: "`", after: "`", defaultText: selected || "code" }),
   },
   {
-    icon: <Link size={14} />,
+    icon: <Link size={16} />,
     title: "Link",
     action: (selected) => ({
       before: "[",
@@ -68,22 +71,22 @@ const TOOLBAR_BUTTONS: ToolbarButton[] = [
     }),
   },
   {
-    icon: <List size={14} />,
+    icon: <List size={16} />,
     title: "Bulleted List",
     action: (selected) => ({ before: "- ", after: "", defaultText: selected || "list item" }),
   },
   {
-    icon: <ListOrdered size={14} />,
+    icon: <ListOrdered size={16} />,
     title: "Numbered List",
     action: (selected) => ({ before: "1. ", after: "", defaultText: selected || "list item" }),
   },
   {
-    icon: <Quote size={14} />,
+    icon: <Quote size={16} />,
     title: "Blockquote",
     action: (selected) => ({ before: "> ", after: "", defaultText: selected || "quote" }),
   },
   {
-    icon: <Minus size={14} />,
+    icon: <Minus size={16} />,
     title: "Horizontal Rule",
     action: () => ({ before: "\n---\n", after: "", defaultText: "" }),
   },
@@ -99,6 +102,7 @@ interface Props {
 
 export function MarkdownEditor({ name, defaultValue, placeholder, rows = 10, className }: Props) {
   const [value, setValue] = useState(defaultValue ?? "")
+  const [activeTab, setActiveTab] = useState<Tab>("edit")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const applyFormat = useCallback((button: ToolbarButton) => {
@@ -128,31 +132,74 @@ export function MarkdownEditor({ name, defaultValue, placeholder, rows = 10, cla
 
   return (
     <div className={`flex flex-col rounded-md border border-input overflow-hidden focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ${className ?? ""}`}>
-      <div className="flex flex-wrap gap-0.5 p-1.5 border-b bg-muted/40">
-        {TOOLBAR_BUTTONS.map((button) => (
+      <div className="flex items-center border-b bg-muted/40">
+        <div className="flex border-r">
           <button
-            key={button.title}
             type="button"
-            title={button.title}
-            onMouseDown={(event) => {
-              event.preventDefault()
-              applyFormat(button)
-            }}
-            className="flex items-center justify-center w-7 h-7 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            onClick={() => setActiveTab("edit")}
+            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+              activeTab === "edit"
+                ? "text-foreground bg-background border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
-            {button.icon}
+            Edit
           </button>
-        ))}
+          <button
+            type="button"
+            onClick={() => setActiveTab("preview")}
+            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+              activeTab === "preview"
+                ? "text-foreground bg-background border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Preview
+          </button>
+        </div>
+
+        {activeTab === "edit" && (
+          <div className="flex flex-wrap gap-0.5 p-1.5">
+            {TOOLBAR_BUTTONS.map((button) => (
+              <button
+                key={button.title}
+                type="button"
+                title={button.title}
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                  applyFormat(button)
+                }}
+                className="flex items-center justify-center w-7 h-7 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              >
+                {button.icon}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      <textarea
-        ref={textareaRef}
-        name={name}
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-        placeholder={placeholder}
-        rows={rows}
-        className="min-h-[160px] w-full px-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus-visible:outline-none resize-y font-mono"
-      />
+
+      {activeTab === "edit" ? (
+        <textarea
+          ref={textareaRef}
+          name={name}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          placeholder={placeholder}
+          rows={rows}
+          className="min-h-[160px] w-full px-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus-visible:outline-none resize-y font-mono"
+        />
+      ) : (
+        <>
+          <input type="hidden" name={name} value={value} />
+          <div className="min-h-[160px] w-full px-3 py-2 text-sm bg-background">
+            {value ? (
+              <MarkdownContent content={value} />
+            ) : (
+              <p className="text-muted-foreground italic">{placeholder}</p>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

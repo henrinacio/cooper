@@ -6,6 +6,7 @@ import { cn, toEmbedUrl } from "@/lib/utils"
 import { CheckCircle, BookOpen, ArrowLeft } from "lucide-react"
 import { CompleteButton } from "./components/complete-button/complete-button"
 import { QuizViewer } from "./components/quiz-viewer/quiz-viewer"
+import { MarkdownContent } from "@/components/markdown-content"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getLocale } from "@/lib/locale"
@@ -167,9 +168,7 @@ export default async function LessonPage({ params }: Props) {
         )}
 
         {lesson.type !== "quiz" && lesson.content && (
-          <div className="prose dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap">{lesson.content}</p>
-          </div>
+          <MarkdownContent content={lesson.content} />
         )}
 
         <CompleteButton
