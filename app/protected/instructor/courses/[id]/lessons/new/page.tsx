@@ -23,13 +23,16 @@ async function NewLessonContent({
   const { id } = await params
   const { moduleId } = await searchParams
 
-  console.log(moduleId)
-
-  if (!moduleId) notFound()
+  if (!moduleId) {
+    notFound()
+  }
 
   const supabase = await createClient()
-  const { data: claims } = await supabase.auth.getClaims()
-  if (!claims?.claims) redirect("/auth/login")
+  const { data } = await supabase.auth.getClaims()
+
+  if (!data?.claims) {
+    redirect("/auth/login")
+  }
 
   const { data: module } = await supabase
     .from("modules")
@@ -38,7 +41,9 @@ async function NewLessonContent({
     .eq("course_id", id)
     .single()
 
-  if (!module) notFound()
+  if (!module) {
+    notFound()
+  }
 
   const locale = await getLocale()
   const t = translations[locale]
